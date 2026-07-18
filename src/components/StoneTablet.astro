@@ -1,0 +1,16 @@
+---
+import type { Lang } from '../i18n/ui';
+import { landing } from '../i18n/landing';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const { verses, attrib } = landing[lang].tablet;
+---
+<section class="tablet-sec">
+  <div class="wrap">
+    <div class="tablet">
+      <div class="glyph">n /</div>
+      {verses.map((v) => <p class="verse" set:html={v} />)}
+      <div class="attrib">{attrib}</div>
+    </div>
+  </div>
+</section>

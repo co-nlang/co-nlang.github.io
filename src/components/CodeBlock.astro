@@ -1,0 +1,7 @@
+---
+import { highlight } from '../lib/highlight';
+interface Props { code: string }
+const { code } = Astro.props;
+const html = highlight(code);
+---
+<code class="cd" set:html={html}></code>

@@ -1,0 +1,17 @@
+---
+import type { Lang } from '../i18n/ui';
+import { t, localize, pageMeta } from '../i18n/ui';
+interface Props { lang: Lang; metaKey: string }
+const { lang, metaKey } = Astro.props;
+const tr = t(lang);
+const m = pageMeta[metaKey][lang];
+---
+<section class="page">
+  <div class="wrap">
+    <a class="back" href={localize('/', lang)}>{tr('page.back')}</a>
+    <span class="eyebrow" style="margin-top:22px">{m.eyebrow}</span>
+    <h2>{m.title}</h2>
+    <p class="lead" style="max-width:60ch">{m.blurb}</p>
+    <div class="placeholder-note">{tr('page.placeholder')}</div>
+  </div>
+</section>

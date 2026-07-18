@@ -1,0 +1,39 @@
+---
+import type { Lang } from '../i18n/ui';
+import { t, localize, altHref } from '../i18n/ui';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const tr = t(lang);
+const pathname = Astro.url.pathname;
+const other = altHref(pathname, lang);
+const otherLabel = lang === 'zh-TW' ? 'EN' : '中';
+---
+<header class="bar">
+  <div class="wrap">
+    <a class="brand" href={localize('/', lang)}>n<span class="sl">/</span></a>
+    <nav>
+      <a class="navlink" href={localize('/language', lang)}>{tr('nav.language')}</a>
+      <a class="navlink" href={localize('/discovery', lang)}>{tr('nav.discovery')}</a>
+      <a class="navlink" href={localize('/tools', lang)}>{tr('nav.tools')}</a>
+      <a class="navlink" href={localize('/research', lang)}>{tr('nav.research')}</a>
+      <a class="navlink" href={localize('/join', lang)}>{tr('nav.join')}</a>
+      <a class="toggle" href={other} aria-label="Switch language">{otherLabel}</a>
+      <button class="toggle" id="theme" type="button" aria-label="Switch theme">◐</button>
+    </nav>
+  </div>
+</header>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    var btn = document.getElementById('theme');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var cur = root.getAttribute('data-theme');
+      if (!cur) cur = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
+      var next = cur === 'dark' ? 'light' : 'dark';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('theme', next); } catch (e) {}
+    });
+  })();
+</script>

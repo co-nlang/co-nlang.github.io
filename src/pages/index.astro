@@ -1,0 +1,10 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Landing from '../components/Landing.astro';
+import { landing } from '../i18n/landing';
+const lang = 'zh-TW' as const;
+const { title, description } = landing[lang].meta;
+---
+<BaseLayout lang={lang} title={title} description={description}>
+  <Landing lang={lang} />
+</BaseLayout>

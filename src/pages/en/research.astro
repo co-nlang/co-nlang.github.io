@@ -1,0 +1,10 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DimensionPage from '../../components/DimensionPage.astro';
+import { pageMeta } from '../../i18n/ui';
+const lang = 'en' as const;
+const key = 'research';
+---
+<BaseLayout lang={lang} title={`${pageMeta[key][lang].title} — n/`}>
+  <DimensionPage lang={lang} metaKey={key} />
+</BaseLayout>

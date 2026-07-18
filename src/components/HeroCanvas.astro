@@ -1,0 +1,110 @@
+---
+// Ambient hero: a 4D tesseract projected to the screen (you see only the
+// projection — that is observation), lit from the upper-left so it casts a
+// morphing shadow on the ground. Depth-cued gold/indigo wireframe.
+---
+<canvas id="sculpt" aria-hidden="true"></canvas>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    var cv = document.getElementById('sculpt');
+    if (!cv) return;
+    var ctx = cv.getContext('2d');
+    var W, H, DPR;
+    var reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+    function css(v) { return getComputedStyle(root).getPropertyValue(v).trim(); }
+    function resize() {
+      DPR = Math.min(devicePixelRatio || 1, 2);
+      W = cv.clientWidth; H = cv.clientHeight;
+      cv.width = W * DPR; cv.height = H * DPR; ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    }
+    window.addEventListener('resize', resize); resize();
+
+    // tesseract: 16 vertices (±1)^4, edges = Hamming-distance 1
+    var V = [], E = [];
+    for (var i = 0; i < 16; i++) V.push([(i & 1 ? 1 : -1), (i & 2 ? 1 : -1), (i & 4 ? 1 : -1), (i & 8 ? 1 : -1)]);
+    for (var a = 0; a < 16; a++) for (var b = a + 1; b < 16; b++) { var xr = a ^ b; if (xr && ((xr & (xr - 1)) === 0)) E.push([a, b]); }
+
+    function rot(p, i, j, ang) { var c = Math.cos(ang), s = Math.sin(ang), pi = p[i], pj = p[j]; p[i] = pi * c - pj * s; p[j] = pi * s + pj * c; }
+    function cross(o, a, b) { return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]); }
+    function hull(pts) {
+      pts = pts.slice().sort(function (a, b) { return a[0] - b[0] || a[1] - b[1]; });
+      var n = pts.length, lo = [], hi = [], i;
+      for (i = 0; i < n; i++) { while (lo.length >= 2 && cross(lo[lo.length - 2], lo[lo.length - 1], pts[i]) <= 0) lo.pop(); lo.push(pts[i]); }
+      for (i = n - 1; i >= 0; i--) { while (hi.length >= 2 && cross(hi[hi.length - 2], hi[hi.length - 1], pts[i]) <= 0) hi.pop(); hi.push(pts[i]); }
+      lo.pop(); hi.pop(); return lo.concat(hi);
+    }
+    function lum(hex) { hex = hex.replace('#', ''); if (hex.length < 6) return 1; var r = parseInt(hex.substr(0, 2), 16), g = parseInt(hex.substr(2, 2), 16), b = parseInt(hex.substr(4, 2), 16); return (0.299 * r + 0.587 * g + 0.114 * b) / 255; }
+
+    var t = 0, appear = 0;
+    function frame() {
+      ctx.clearRect(0, 0, W, H);
+      var mn = Math.min(W, H);
+      var cx = W >= 900 ? W * 0.70 : W * 0.5, cy = H * 0.52, S = mn * 0.15;
+      var gold = css('--gold'), indigo = css('--indigo');
+      if (appear < 1) appear += 0.012;
+      var ez = reduce ? 1 : Math.min(1, appear);
+
+      var aw = t * 0.00020, ayz = t * 0.00015, axy = t * 0.00008;
+      var P = [], Z = [], Wc = [], C3 = [];
+      for (var k = 0; k < 16; k++) {
+        var p = V[k].slice();
+        rot(p, 0, 3, aw); rot(p, 1, 2, ayz); rot(p, 0, 1, axy);
+        var f4 = 2.8 / (2.8 - p[3]);
+        var x = p[0] * f4, y = p[1] * f4, z = p[2] * f4;
+        var f3 = 3.4 / (3.4 - z);
+        P.push([cx + x * S * f3, cy + y * S * f3]); Z.push(z + p[3]); Wc.push(p[3]); C3.push([x, y, z]);
+      }
+
+      // light source (upper-left) — the beam that reveals the structure by projection
+      var isDark = lum(css('--bg')) < 0.42;
+      var lx = cx - S * 2.15, ly = cy - S * 2.35;
+      var lg = ctx.createRadialGradient(lx, ly, 0, lx, ly, S * 3.2);
+      lg.addColorStop(0, isDark ? 'rgba(238,196,104,0.20)' : 'rgba(255,244,214,0.55)');
+      lg.addColorStop(1, 'transparent');
+      ctx.globalAlpha = ez; ctx.fillStyle = lg; ctx.fillRect(0, 0, W, H);
+
+      // cast shadow on the ground — footprint of the object, reshaping as it turns
+      var floorY = cy + S * 2.35, gp = [];
+      for (var s = 0; s < 16; s++) { var c = C3[s], zz = c[2], fg = 3.2 / (3.2 - zz); gp.push([cx + (c[0] - 0.36 * c[1]) * S * fg, floorY + zz * S * 0.30 * fg]); }
+      var hp = hull(gp);
+      ctx.save();
+      ctx.globalAlpha = ez;
+      ctx.shadowColor = isDark ? 'rgba(227,178,76,0.5)' : 'rgba(35,28,12,0.5)';
+      ctx.shadowBlur = 22;
+      ctx.fillStyle = isDark ? 'rgba(227,178,76,0.07)' : 'rgba(38,30,14,0.17)';
+      ctx.beginPath(); ctx.moveTo(hp[0][0], hp[0][1]);
+      for (var h = 1; h < hp.length; h++) ctx.lineTo(hp[h][0], hp[h][1]);
+      ctx.closePath(); ctx.fill();
+      ctx.restore();
+      ctx.globalAlpha = 1;
+
+      // depth-sorted edges, near = brighter & thicker
+      var idx = E.map(function (_, n) { return n; });
+      idx.sort(function (A, B) { return (Z[E[A][0]] + Z[E[A][1]]) - (Z[E[B][0]] + Z[E[B][1]]); });
+      for (var m = 0; m < idx.length; m++) {
+        var e = E[idx[m]], A0 = e[0], B0 = e[1];
+        var nz = ((Z[A0] + Z[B0]) * 0.5 + 2.6) / 5.2; if (nz < 0) nz = 0; if (nz > 1) nz = 1;
+        var inner = (Wc[A0] + Wc[B0]) < -0.15;
+        ctx.strokeStyle = inner ? indigo : gold;
+        ctx.globalAlpha = (0.22 + 0.72 * nz) * ez;
+        ctx.lineWidth = 0.7 + 1.7 * nz;
+        ctx.beginPath(); ctx.moveTo(P[A0][0], P[A0][1]); ctx.lineTo(P[B0][0], P[B0][1]); ctx.stroke();
+      }
+      // vertices with glow
+      for (var vI = 0; vI < 16; vI++) {
+        var nz2 = (Z[vI] + 2.6) / 5.2; if (nz2 < 0) nz2 = 0; if (nz2 > 1) nz2 = 1;
+        ctx.fillStyle = Wc[vI] < -0.15 ? indigo : gold;
+        ctx.globalAlpha = (0.3 + 0.7 * nz2) * ez;
+        ctx.beginPath(); ctx.arc(P[vI][0], P[vI][1], 1.4 + 1.8 * nz2, 0, 7); ctx.fill();
+        ctx.globalAlpha = 0.12 * nz2 * ez;
+        ctx.beginPath(); ctx.arc(P[vI][0], P[vI][1], 7 * nz2 + 3, 0, 7); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      t += 16;
+      if (!reduce) requestAnimationFrame(frame);
+    }
+    frame();
+  })();
+</script>
