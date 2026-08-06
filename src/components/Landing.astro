@@ -21,20 +21,14 @@ const motifs = [
 <section class="hero">
   <HeroCanvas />
   <div class="wrap">
-    <div class="hero-grid">
-      <div>
-        <span class="eyebrow">{c.hero.eyebrow}</span>
-        <div class="wordmark">n<span class="sl">/</span></div>
-        <h1>{c.hero.headline}</h1>
-        <p class="lead">{c.hero.lead}</p>
-        <div class="cta-row">
-          <a class="btn btn-gold" href="#why">{c.hero.cta1}</a>
-          <a class="btn btn-ghost" href={localize('/join', lang)}>{c.hero.cta2}</a>
-        </div>
-      </div>
-      <div class="hero-code">
-        <span class="cap">{c.hero.codeCap}</span>
-        <CodeBlock code={c.hero.code} />
+    <div class="hero-copy">
+      <span class="eyebrow">{c.hero.eyebrow}</span>
+      <div class="wordmark">n<span class="sl">/</span></div>
+      <h1>{c.hero.headline}</h1>
+      <p class="lead">{c.hero.lead}</p>
+      <div class="cta-row">
+        <a class="btn btn-gold" href="#why">{c.hero.cta1}</a>
+        <a class="btn btn-ghost" href={localize('/join', lang)}>{c.hero.cta2}</a>
       </div>
     </div>
   </div>
@@ -60,8 +54,8 @@ const motifs = [
         </div>
       ))}
     </div>
-    <div class="converge">
-      <CodeBlock code={c.why.convergeCode} />
+    <div class="demo">
+      <CodeBlock code={c.why.demoCode} cap={c.why.demoCap} copy lang={lang} />
       <div class="note" set:html={c.why.note}></div>
     </div>
   </div>
@@ -98,14 +92,18 @@ const motifs = [
     <div class="co-eq" set:html={c.join.coEq}></div>
     <p class="lead" style="max-width:58ch;margin-bottom:8px">{c.join.lead}</p>
     <div class="council">
-      {c.join.seats.map((s) => (
+      {c.join.traits.map((tr) => (
         <div class="seat">
-          <div class="n">{s.n}</div>
-          <h3>{s.title}</h3>
-          <p>{s.body}</p>
+          <div class="n">{tr.n}</div>
+          <h3>{tr.title}</h3>
+          <p>{tr.body}</p>
         </div>
       ))}
     </div>
+    <div class="join-code">
+      <CodeBlock code={c.join.code} copy lang={lang} />
+    </div>
+    <p class="coda">{c.join.coda}</p>
     <div class="repos">
       <a class="repo" href="https://github.com/co-nlang/nlang-spec"><span class="r">@co-nlang/</span>nlang-spec</a>
       <a class="repo" href="https://github.com/co-nlang/nlang-tools"><span class="r">@co-nlang/</span>nlang-tools</a>

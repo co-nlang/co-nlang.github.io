@@ -1,7 +1,52 @@
 ---
 import { highlight } from '../lib/highlight';
-interface Props { code: string }
-const { code } = Astro.props;
+import type { Lang } from '../i18n/ui';
+
+interface Props { code: string; cap?: string; copy?: boolean; lang?: Lang }
+const { code, cap, copy = false, lang = 'en' } = Astro.props;
 const html = highlight(code);
+const [labelCopy, labelCopied] = lang === 'zh-TW' ? ['複製', '已複製'] : ['Copy', 'Copied'];
+const framed = Boolean(cap || copy);
 ---
-<code class="cd" set:html={html}></code>
+{framed ? (
+  <figure class="codewin">
+    <figcaption class="cw-bar">
+      <span class="cw-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      {cap && <span class="cw-cap">{cap}</span>}
+      {copy && (
+        <button class="cw-copy" type="button" data-code={code} data-copied={labelCopied} aria-label={labelCopy}>
+          <svg class="ic-doc" viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><rect x="5" y="4.5" width="8" height="9.5" rx="1.2"/><path d="M10.5 4.5v-2A1.2 1.2 0 0 0 9.3 1.3H3.2A1.2 1.2 0 0 0 2 2.5v7.8a1.2 1.2 0 0 0 1.2 1.2h1.6"/></svg>
+          <svg class="ic-ok" viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2.5 8.5 6 12 13.5 4"/></svg>
+          <span class="cw-copy-label">{labelCopy}</span>
+        </button>
+      )}
+    </figcaption>
+    <code class="cd" set:html={html}></code>
+  </figure>
+) : (
+  <code class="cd" set:html={html}></code>
+)}
+
+<script>
+  document.addEventListener('click', async (e) => {
+    const btn = (e.target as HTMLElement).closest('.cw-copy') as HTMLButtonElement | null;
+    if (!btn || btn.classList.contains('done')) return;
+    const code = btn.getAttribute('data-code') || '';
+    try {
+      await navigator.clipboard.writeText(code);
+    } catch {
+      const ta = document.createElement('textarea');
+      ta.value = code;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+    }
+    const label = btn.querySelector('.cw-copy-label');
+    if (label) label.textContent = btn.getAttribute('data-copied');
+    btn.classList.add('done');
+    setTimeout(() => btn.classList.remove('done'), 1500);
+  });
+</script>

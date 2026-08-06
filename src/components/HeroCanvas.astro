@@ -41,7 +41,9 @@
     function frame() {
       ctx.clearRect(0, 0, W, H);
       var mn = Math.min(W, H);
-      var cx = W >= 900 ? W * 0.70 : W * 0.5, cy = H * 0.52, S = mn * 0.15;
+      var cx = W * 0.6;
+      var cy = H * 0.6;
+      var S = mn * 0.12;
       var gold = css('--gold'), indigo = css('--indigo');
       if (appear < 1) appear += 0.012;
       var ez = reduce ? 1 : Math.min(1, appear);
@@ -59,8 +61,8 @@
 
       // light source (upper-left) — the beam that reveals the structure by projection
       var isDark = lum(css('--bg')) < 0.42;
-      var lx = cx - S * 2.15, ly = cy - S * 2.35;
-      var lg = ctx.createRadialGradient(lx, ly, 0, lx, ly, S * 3.2);
+      var lx = cx - S * 2.15, ly = cy - S * 4.35;
+      var lg = ctx.createRadialGradient(lx, ly, 0, lx, ly, S *5);
       lg.addColorStop(0, isDark ? 'rgba(238,196,104,0.20)' : 'rgba(255,244,214,0.55)');
       lg.addColorStop(1, 'transparent');
       ctx.globalAlpha = ez; ctx.fillStyle = lg; ctx.fillRect(0, 0, W, H);

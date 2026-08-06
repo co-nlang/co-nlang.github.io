@@ -6,11 +6,15 @@ const { lang } = Astro.props;
 const { verses, attrib } = landing[lang].tablet;
 ---
 <section class="tablet-sec">
+  <div class="rays" aria-hidden="true"></div>
   <div class="wrap">
     <div class="tablet">
-      <div class="glyph">n /</div>
+      <div class="frame" aria-hidden="true"></div>
+      <div class="glyph">n/</div>
       {verses.map((v) => <p class="verse" set:html={v} />)}
       <div class="attrib">{attrib}</div>
     </div>
+    <div class="pedestal" aria-hidden="true"></div>
   </div>
+  <div class="mist" aria-hidden="true"><i></i><i></i><i></i></div>
 </section>

@@ -10,8 +10,8 @@
     "verify:snippets": "node scripts/verify-snippets.mjs"
   },
   "dependencies": {
-    "astro": "^4.16.0",
-    "@astrojs/mdx": "^3.1.0",
-    "@astrojs/sitemap": "^3.2.0"
+    "@astrojs/mdx": "^7.0.5",
+    "@astrojs/sitemap": "^3.2.0",
+    "astro": "^7.1.6"
   }
 }

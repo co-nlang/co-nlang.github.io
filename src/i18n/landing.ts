@@ -2,15 +2,15 @@ import type { Lang } from './ui';
 
 export interface TriItem { role: string; name: string; code: string }
 export interface DimItem { idx: string; title: string; body: string; tag: string; honest?: string; href: string }
-export interface Seat { n: string; title: string; body: string }
+export interface Trait { n: string; title: string; body: string }
 
 export interface LandingContent {
   meta: { title: string; description: string };
-  hero: { eyebrow: string; headline: string; lead: string; cta1: string; cta2: string; codeCap: string; code: string };
+  hero: { eyebrow: string; headline: string; lead: string; cta1: string; cta2: string };
   tablet: { verses: string[]; attrib: string };
-  why: { eyebrow: string; title: string; lead: string; tri: TriItem[]; convergeCode: string; note: string };
+  why: { eyebrow: string; title: string; lead: string; tri: TriItem[]; demoCap: string; demoCode: string; note: string };
   dims: { eyebrow: string; title: string; lead: string; items: DimItem[] };
-  join: { eyebrow: string; title: string; coEq: string; lead: string; seats: Seat[] };
+  join: { eyebrow: string; title: string; coEq: string; lead: string; traits: Trait[]; code: string; coda: string };
 }
 
 const zh: LandingContent = {
@@ -20,12 +20,37 @@ const zh: LandingContent = {
   },
   hero: {
     eyebrow: '語義作業系統 · @co-nlang',
-    headline: '沒有執行,只有觀測。真理是收斂之點。',
-    lead: '一個基於格論的宣告式語言 —— 資料、型別、邏輯是同一個幾何物件,只是觀測的角度不同。你不寫步驟,你雕刻約束;交集剩下的形狀就是結果。',
+    headline: '沒有執行，只有觀測。真理是收斂之點。',
+    lead: '一個基於格論的宣告式語言 —— 資料、型別、邏輯是同一個幾何物件，只是觀測的角度不同。你不寫步驟，你雕刻約束；交集剩下的形狀就是結果。',
     cta1: '探索語言',
     cta2: '加入我們',
-    codeCap: '收斂,即是那唯一之物',
-    code: `;; 型別即約束,不是註記
+  },
+  tablet: {
+    verses: [
+      '如其在頂（<span class="car">_</span>），如其在底（<span class="car">_|_</span>）；<br>如其在全集之虛空，如其在原子之真實。<br><span class="em">以成那唯一之奇蹟 —— 收斂。</span>',
+      '宇宙皆 Combo，欄位即可能之源，原子即存在之果。<br><span class="em">交集以純化真理，聯集以展開萬物。</span>',
+      '銜尾蛇自吞其尾：其父為定義，其母為收斂。<br><span class="em">其力在於:若它能被觀測，它便已是真實。</span>',
+    ],
+    attrib: '— 規格書序言 · Specification Preface',
+  },
+  why: {
+    eyebrow: '為什麼是 n/',
+    title: '資料、型別、邏輯 —— 同一個東西',
+    lead: '傳統上你用 YAML 寫設定、TypeScript 寫型別、Python 寫驗證。<br>n/ 把三者透過一個共通結構(Combo)映射到「格」上，再用單一運算 —— 集合交集(<code style="color:var(--gold)">&</code>)—— 驅動全部。',
+    tri: [
+      { role: '存有', name: 'Data', code: `;; 存在
+age: 25` },
+      { role: '邊界', name: 'Type', code: `;; 約束，非註記
+25 & @int   ;; → 25
+"hi" & @int
+;; → _|_` },
+      { role: '變換', name: 'Logic', code: `;; 態射與管道
+/double: x -> x * 2
+5 |> /double |> /inc
+;; → 11` },
+    ],
+    demoCap: '收斂，即是那唯一之物',
+    demoCode: `;; 型別即約束，不是註記
 age: 25 & @int      ;; → 25
 
 ;; 兩個視角合併 = 交集
@@ -35,41 +60,12 @@ age: 25 & @int      ;; → 25
 ;; 矛盾坍縮為帶因果的空集
 { age: 25 } & { age: 30 }
 ;; → _|_ (%cause: #conflict)`,
-  },
-  tablet: {
-    verses: [
-      '如其在頂（<span class="car">_</span>），如其在底（<span class="car">_|_</span>）;<br>如其在全集之虛空,如其在原子之真實。<br><span class="em">以成那唯一之奇蹟 —— 收斂。</span>',
-      '宇宙皆 Combo,欄位即可能之源,原子即存在之果。<br><span class="em">交集以純化真理,聯集以展開萬物。</span>',
-      '銜尾蛇自吞其尾:其父為定義,其母為收斂。<br><span class="em">其力在於:若它能被觀測,它便已是真實。</span>',
-    ],
-    attrib: '— 規格書序言 · Specification Preface',
-  },
-  why: {
-    eyebrow: '為什麼是 n/',
-    title: '資料、型別、邏輯 —— 同一個東西',
-    lead: '傳統上你用 YAML 寫設定、TypeScript 寫型別、Python 寫驗證。n/ 把三者透過一個共通結構(Combo)映射到「格」上,再用單一運算 —— 集合交集(<code style="color:var(--gold)">&</code>)—— 驅動全部。',
-    tri: [
-      { role: '存有', name: 'Data', code: `;; 存在
-age: 25` },
-      { role: '邊界', name: 'Type', code: `;; 約束,非註記
-25 & @int   ;; → 25
-"hi" & @int
-;; → _|_` },
-      { role: '變換', name: 'Logic', code: `;; 態射與管道
-/double: x -> x * 2
-5 |> /double |> /inc
-;; → 11` },
-    ],
-    convergeCode: `;; 收斂:約束重疊,剩下唯一的形狀
-{ x: 1 } & { y: 2 }        ;; → { x: 1, y: 2 }
-(1 | 7) & 1..3            ;; → 1
-1..10 & 5..20            ;; → 5..10`,
-    note: '<b style="color:var(--indigo)">衝突不是崩潰。</b> 當約束無法相容,結果坍縮為 <code class="bt">_|_</code> —— 一個帶著 <code class="op">%cause</code> 因果標記的空集。錯誤在 n/ 裡不是例外,而是邏輯的空集合。',
+    note: '<b style="color:var(--indigo)">衝突不是崩潰。</b> 當約束無法相容，結果坍縮為 <code class="bt">_|_</code> —— 一個帶著 <code class="op">%cause</code> 因果標記的空集。錯誤在 n/ 裡不是例外，而是邏輯的空集合。',
   },
   dims: {
     eyebrow: '四個維度',
-    title: '同一物件,不同角度',
-    lead: 'n/ 橫跨計算、數學、物理。選一個角度進入,深度自己決定。',
+    title: '同一物件，不同角度',
+    lead: 'n/ 橫跨計算、數學、物理。選一個角度進入，深度自己決定。',
     items: [
       { idx: '01', href: '/language', title: '語言 · 格論',
         body: 'Combo 與 Cocoon、交集 <code class="op">&</code> 與聯集 <code class="jn">|</code>、態射與管道、Top <code class="op">_</code> 與 Bottom <code class="bt">_|_</code>。語言的完整語法與哲學。',
@@ -82,20 +78,28 @@ age: 25` },
         tag: '開始使用 →' },
       { idx: '04', href: '/research', title: '研究 · 障礙階梯',
         body: '上同調障礙階梯:把型別衝突、拜占庭錯誤、身分捏造讀成同一台幾何機器的不同階。22 篇論文 + 白皮書 Paper N。',
-        honest: '誠實標記:階梯的部分對應為 correspondence-level 洞見,關鍵環節(如 item 21)是 <i>reduction</i> 而非已封閉的定理。我們把每個「本質」宣稱都掛上它在 H* 的強度標籤 —— 這條防火牆是語言哲學的一部分,不是行銷話術。',
+        honest: '誠實標記:階梯的部分對應為 correspondence-level 洞見，關鍵環節(如 item 21)是 <i>reduction</i> 而非已封閉的定理。我們把每個「本質」宣稱都掛上它在 H* 的強度標籤 —— 這條防火牆是語言哲學的一部分，不是行銷話術。',
         tag: '進入深水區 →' },
     ],
   },
   join: {
     eyebrow: '加入我們',
-    title: '語言是極限,人是餘極限',
+    title: '語言是極限，人是餘極限',
     coEq: '<span class="k">co:</span> #collective <span class="jn">|</span> #colimit',
-    lead: '在 n/ 中,沒有單一視角能握住全部真理 —— 這是一條定理,不是口號。你一個人看不見的,眾人的視角交集會收斂出來。引導期的治理以 GitHub 為物理實體,由四人委員會維護。',
-    seats: [
-      { n: '×2', title: '邏輯守護者', body: '審核規格與文檔的語義一致性(nlang-spec)。' },
-      { n: '×2', title: '幾何工程師', body: '負責 oo 引擎的實作與技術合規(nlang-tools)。' },
-      { n: '✎', title: '創始人否決權', body: '違反不變性的提案可被否決,行使須附邏輯證明。' },
+    lead: '在 n/ 中，沒有單一視角能握住全部真理 —— 這是一條定理，不是口號。我們不列能力清單；我們尋找願意這樣觀測世界的人。每個人都具備這些特質——差別只在你願不願意。',
+    traits: [
+      { n: '_|_', title: '誠實', body: '衝突不是恥辱——但你得帶著原因。說「我不知道」是合法的觀測結果,不是需要隱藏的缺陷。' },
+      { n: '&', title: '收斂', body: '願意把自己的視角拿去和別人交集——即使結果比你原本相信的更小。那是真理的形狀。' },
+      { n: '|', title: '接納', body: '不急著坍縮別人的疊加態。歧異是合法的存在,不是待消滅的敵人。' },
+      { n: '<<>>', title: '耐心', body: '不強迫坍縮。觀測,讓真理自己收斂——結構在那裡,你看到的時候它就已經是真實。' },
+      { n: '_', title: '開放', body: '未知不是錯誤,是還沒被觀測到的可能性。萬有集合是每個人的起點。' },
+      { n: '#blur', title: '漸進', body: '模糊的真理不是謊言,是等待更多觀測與能量投入的莊嚴邀請。' },
     ],
+    code: `;; 每個人都是 _ (top/萬有集合)
+;; 差別只在你願意觀測哪些面向
+you: _
+you & @observer   ;; 收斂，即是那唯一之物`,
+    coda: '引導期的治理細節仍在收斂中。目前以 GitHub 為物理實體，規格書為法典。結構會從實踐中湧現——不先發明語法。',
   },
 };
 
@@ -110,17 +114,6 @@ const en: LandingContent = {
     lead: 'A lattice-theoretic declarative language where data, type, and logic are one geometric object seen from different angles. You don’t write steps — you sculpt constraints; the shape their intersection leaves is the result.',
     cta1: 'Explore the language',
     cta2: 'Join us',
-    codeCap: 'convergence is the one thing',
-    code: `;; a type is a constraint, not an annotation
-age: 25 & @int      ;; → 25
-
-;; merging two views = intersection
-{ age: 25 } & { age: @int }
-;; → { age: 25 }
-
-;; contradiction collapses to a caused empty set
-{ age: 25 } & { age: 30 }
-;; → _|_ (%cause: #conflict)`,
   },
   tablet: {
     verses: [
@@ -146,10 +139,17 @@ age: 25` },
 5 |> /double |> /inc
 ;; → 11` },
     ],
-    convergeCode: `;; convergence: constraints overlap, one shape remains
-{ x: 1 } & { y: 2 }        ;; → { x: 1, y: 2 }
-(1 | 7) & 1..3            ;; → 1
-1..10 & 5..20            ;; → 5..10`,
+    demoCap: 'convergence is the one thing',
+    demoCode: `;; a type is a constraint, not an annotation
+age: 25 & @int      ;; → 25
+
+;; merging two views = intersection
+{ age: 25 } & { age: @int }
+;; → { age: 25 }
+
+;; contradiction collapses to a caused empty set
+{ age: 25 } & { age: 30 }
+;; → _|_ (%cause: #conflict)`,
     note: '<b style="color:var(--indigo)">Conflict is not a crash.</b> When constraints can’t reconcile, the result collapses to <code class="bt">_|_</code> — an empty set carrying a <code class="op">%cause</code>. An error here isn’t an exception; it’s the empty set of logic.',
   },
   dims: {
@@ -176,12 +176,20 @@ age: 25` },
     eyebrow: 'Join us',
     title: 'The language is the limit; the people are the colimit',
     coEq: '<span class="k">co:</span> #collective <span class="jn">|</span> #colimit',
-    lead: 'In n/ no single perspective holds the whole truth — that is a theorem, not a slogan. What you cannot see alone, merged views converge to. During bootstrap, governance runs on GitHub, maintained by a Council of Four.',
-    seats: [
-      { n: '×2', title: 'Logic Guardians', body: 'Guard semantic consistency of the spec and docs (nlang-spec).' },
-      { n: '×2', title: 'Geometry Engineers', body: 'Own the oo engine’s implementation and compliance (nlang-tools).' },
-      { n: '✎', title: 'Founder’s Veto', body: 'Proposals breaking invariants can be vetoed — with a logical proof attached.' },
+    lead: 'In n/ no single perspective holds the whole truth — that is a theorem, not a slogan. We don\'t list skill requirements; we look for people willing to observe the world this way. Everyone already has these traits — the difference is whether you choose to.',
+    traits: [
+      { n: '_|_', title: 'Honesty', body: 'Conflict is not shame — but you must carry the cause. "I don\'t know" is a valid observation, not a defect to hide.' },
+      { n: '&', title: 'Convergence', body: 'Willing to intersect your view with others — even when the result is smaller than what you believed. That is the shape of truth.' },
+      { n: '|', title: 'Acceptance', body: 'Don\'t rush to collapse someone else\'s superposition. Disagreement is a valid state, not an enemy to destroy.' },
+      { n: '<<>>', title: 'Patience', body: 'Don\'t force collapse. Observe, and let truth converge on its own — the structure is there; when you see it, it is already real.' },
+      { n: '_', title: 'Openness', body: 'Unknown is not error. It is possibility not yet observed. The universal set is everyone\'s starting point.' },
+      { n: '#blur', title: 'Gradual', body: 'A blurry truth is not a lie — it is a solemn invitation, awaiting more observation and energy.' },
     ],
+    code: `;; everyone is _ — the universal set
+;; the difference is which facets you choose to observe
+you: _
+you & @observer   ;; convergence`,
+    coda: 'The governance details are still converging. For now, GitHub is the physical substrate; the specification is the law. Structure will emerge from practice — we don\'t invent syntax ahead of need.',
   },
 };
 
