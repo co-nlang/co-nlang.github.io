@@ -11,3 +11,6 @@ node_modules/
 # os / editor
 .DS_Store
 *.log
+
+# honesty-gate receipt (written by npm run verify:snippets)
+src/i18n/verified.json

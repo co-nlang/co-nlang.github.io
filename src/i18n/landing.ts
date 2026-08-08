@@ -43,10 +43,11 @@ age: 25` },
       { role: '邊界', name: 'Type', code: `;; 約束，非註記
 25 & @int   ;; → 25
 "hi" & @int
-;; → _|_` },
+;; → _|_ (%cause: #conflict)` },
       { role: '變換', name: 'Logic', code: `;; 態射與管道
 /double: x -> x * 2
-5 |> /double |> /inc
+/inc: x -> x + 1
+out: 5 |> /double |> /inc
 ;; → 11` },
     ],
     demoCap: '收斂，即是那唯一之物',
@@ -133,10 +134,11 @@ age: 25` },
       { role: 'Boundary', name: 'Type', code: `;; a constraint, not an annotation
 25 & @int   ;; → 25
 "hi" & @int
-;; → _|_` },
+;; → _|_ (%cause: #conflict)` },
       { role: 'Transformation', name: 'Logic', code: `;; morphism and pipe
 /double: x -> x * 2
-5 |> /double |> /inc
+/inc: x -> x + 1
+out: 5 |> /double |> /inc
 ;; → 11` },
     ],
     demoCap: 'convergence is the one thing',

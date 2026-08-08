@@ -1,13 +1,27 @@
 ---
 import type { Lang } from '../i18n/ui';
 import { t } from '../i18n/ui';
+
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const tr = t(lang);
+
+// The verification line is *derived from the gate's receipt*, not asserted in
+// copy. `npm run verify:snippets` writes the receipt after every claim on the
+// site reproduces on a real engine; without a run there is no receipt, and the
+// footer says nothing about verification. No gate, no claim.
+//
+// `import.meta.glob` is the optional import here: a missing receipt yields an
+// empty record rather than a build error.
+const found = import.meta.glob<{ default: { engine: string } }>('../i18n/verified.json', {
+  eager: true,
+});
+const receipt = Object.values(found)[0]?.default ?? null;
+const stamp = receipt ? tr('footer.stamp').replace('{engine}', receipt.engine) : '';
 ---
 <footer>
   <div class="wrap">
-    <div class="stamp" set:html={tr('footer.stamp')}></div>
+    {stamp && <div class="stamp" set:html={stamp}></div>}
     <div class="tag2">{tr('footer.tag')}</div>
   </div>
 </footer>

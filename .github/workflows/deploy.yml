@@ -14,6 +14,11 @@ concurrency:
   group: pages
   cancel-in-progress: true
 
+# The engine the site's snippets are verified against. Bump deliberately: the
+# footer stamp is derived from whatever this build actually ran.
+env:
+  OO_TAG: v0.11.1
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,9 +29,27 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
-      # Honesty gate: every n/ snippet on the site must run on a real oo engine.
-      # Enable once the oo binary is available in CI (see scripts/verify-snippets.mjs).
-      # - run: npm run verify:snippets
+
+      # ── Honesty gate ──────────────────────────────────────────────────
+      # Every `;; → X` on the site must reproduce on a real oo engine. The gate
+      # derives its cases from src/i18n/landing.ts, so a snippet cannot be
+      # uncovered, and it writes the receipt the footer's stamp is built from.
+      # A failure here fails the deploy — that is the whole point of it.
+      - name: Check out the engine
+        uses: actions/checkout@v4
+        with:
+          repository: co-nlang/nlang-tools
+          ref: ${{ env.OO_TAG }}
+          path: .engine
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: .engine
+      - name: Build oo
+        run: cargo build --release -p oo --bin oo --manifest-path .engine/Cargo.toml
+      - name: Verify every n/ snippet
+        run: OO_BIN="$PWD/.engine/target/release/oo" npm run verify:snippets
+
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
