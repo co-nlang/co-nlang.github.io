@@ -17,7 +17,7 @@ concurrency:
 # The engine the site's snippets are verified against. Bump deliberately: the
 # footer stamp is derived from whatever this build actually ran.
 env:
-  OO_TAG: v0.11.1
+  OO_TAG: v0.26.1
 
 jobs:
   build:

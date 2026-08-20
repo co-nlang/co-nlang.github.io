@@ -25,7 +25,7 @@
 // is reported rather than obeyed.
 
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdtempSync, writeFileSync, rmSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
@@ -35,6 +35,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const repo = resolve(here, '..');
 const OO = process.env.OO_BIN || resolve(repo, '../nlang-tools/target/release/oo');
 const SOURCE = resolve(repo, 'src/i18n/landing.ts');
+const LANDING = resolve(repo, 'src/components/Landing.astro');
 const RECEIPT = resolve(repo, 'src/i18n/verified.json');
 
 if (!existsSync(OO)) {
@@ -59,15 +60,39 @@ const norm = (s) => s.replace(/;;.*$/gm, '').replace(/\s+/g, ' ').trim();
 // ── extract every code block the site renders ────────────────────────────
 
 const src = readFileSync(SOURCE, 'utf8');
-const blocks = [...src.matchAll(/(code|demoCode):\s*`([^`]*)`/g)].map((m, i) => ({
-  i,
-  key: m[1],
-  body: m[2],
-}));
+const blocks = [...src.matchAll(/([A-Za-z_]\w*):\s*`([^`]*)`/g)]
+  .filter((m) => /code$/i.test(m[1]) || /;;\s*→/.test(m[2]))
+  .map((m, i) => ({ i, key: m[1], body: m[2] }));
 
-// Control: an extractor that silently finds nothing would report a perfect run.
-if (blocks.length === 0) {
-  console.error(`✗ found no code blocks in ${SOURCE} — the extractor is broken, not the site`);
+// Multi-file examples are JSON artifacts imported by the page itself. The
+// verifier discovers those imports instead of maintaining a parallel list.
+// If an artifact stops being rendered, it stops being verified; if the page
+// imports a new one, the gate must understand and run it.
+const landingSrc = readFileSync(LANDING, 'utf8');
+const fixtureRefs = [
+  ...landingSrc.matchAll(/from\s+['"]\.\.\/snippets\/([^'"]+\.json)['"]/g),
+].map((m) => m[1]);
+const fixtures = [...new Set(fixtureRefs)].map((name) => {
+  const path = resolve(repo, 'src/snippets', name);
+  const fixture = JSON.parse(readFileSync(path, 'utf8'));
+  if (
+    typeof fixture.id !== 'string' ||
+    !Array.isArray(fixture.files) ||
+    fixture.files.length < 2 ||
+    fixture.files.some((f) => typeof f.name !== 'string' || typeof f.source !== 'string') ||
+    typeof fixture.observe !== 'string' ||
+    (fixture.orderInvariant !== undefined && typeof fixture.orderInvariant !== 'boolean') ||
+    typeof fixture.expected !== 'string'
+  ) {
+    console.error(`✗ unsupported snippet fixture shape: ${path}`);
+    process.exit(2);
+  }
+  return fixture;
+});
+
+// Control: extractors that silently find nothing would report a perfect run.
+if (blocks.length === 0 && fixtures.length === 0) {
+  console.error(`✗ found no rendered snippet artifacts — the extractor is broken, not the site`);
   process.exit(2);
 }
 
@@ -109,6 +134,17 @@ function evaluate({ code, deps }) {
   const file = join(work, 'snippet.n');
   writeFileSync(file, program);
   return norm(oo(['run', file, '--observe', name]));
+}
+
+function evaluateFixture(fixture, files = fixture.files) {
+  const dir = join(work, fixture.id);
+  mkdirSync(dir, { recursive: true });
+  const paths = files.map((f) => {
+    const path = join(dir, f.name);
+    writeFileSync(path, f.source);
+    return path;
+  });
+  return norm(oo(['run', ...paths, '--observe', fixture.observe]));
 }
 
 // ── self-test: prove the checker can fail ────────────────────────────────
@@ -163,6 +199,24 @@ for (const b of blocks) {
   }
 }
 
+for (const fixture of fixtures) {
+  checked++;
+  const got = evaluateFixture(fixture);
+  const reversed = fixture.orderInvariant
+    ? evaluateFixture(fixture, [...fixture.files].reverse())
+    : null;
+  const ok = got === norm(fixture.expected) &&
+    (reversed === null || reversed === norm(fixture.expected));
+  console.log(`${ok ? '✓' : '✗'}  ${fixture.files.map((f) => f.name).join(' & ')}  →  ${got || '(no output)'}`);
+  if (reversed !== null) {
+    console.log(`${reversed === norm(fixture.expected) ? '✓' : '✗'}  reversed input order  →  ${reversed || '(no output)'}`);
+  }
+  if (!ok) {
+    failed++;
+    console.log(`     the site claims: ${norm(fixture.expected)}`);
+  }
+}
+
 if (checked === 0) {
   console.error('✗ no claims found — either the site stopped claiming results, or the parser did');
   process.exit(2);
@@ -172,7 +226,7 @@ for (const n of notes) console.log(`·  ${n}`);
 
 const version = oo(['--version']).trim();
 console.log(
-  `\n${failed ? `✗ ${failed} failure(s)` : `✓ ${checked} claim(s) across ${blocks.length} block(s) verified`} against ${version}`
+  `\n${failed ? `✗ ${failed} failure(s)` : `✓ ${checked} claim(s) across ${blocks.length + fixtures.length} rendered artifact(s) verified`} against ${version}`
 );
 
 // ── receipt ──────────────────────────────────────────────────────────────
@@ -182,7 +236,12 @@ if (!failed) {
   writeFileSync(
     RECEIPT,
     JSON.stringify(
-      { engine: version, checkedAt: new Date().toISOString(), blocks: blocks.length, claims: checked },
+      {
+        engine: version,
+        checkedAt: new Date().toISOString(),
+        blocks: blocks.length + fixtures.length,
+        claims: checked,
+      },
       null,
       2
     ) + '\n'

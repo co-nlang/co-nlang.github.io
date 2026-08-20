@@ -5,7 +5,7 @@ interface Props { lang: Lang }
 const { lang } = Astro.props;
 const { verses, attrib } = landing[lang].tablet;
 ---
-<section class="tablet-sec">
+<div class="tablet-sec">
   <div class="rays" aria-hidden="true"></div>
   <div class="wrap">
     <div class="tablet">
@@ -17,4 +17,4 @@ const { verses, attrib } = landing[lang].tablet;
     <div class="pedestal" aria-hidden="true"></div>
   </div>
   <div class="mist" aria-hidden="true"><i></i><i></i><i></i></div>
-</section>
+</div>

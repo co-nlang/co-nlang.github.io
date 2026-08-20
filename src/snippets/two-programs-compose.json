@@ -1,0 +1,16 @@
+{
+  "id": "two-programs-compose",
+  "files": [
+    {
+      "name": "server.n",
+      "source": "server: { host: \"127.0.0.1\" }\n"
+    },
+    {
+      "name": "deploy.n",
+      "source": "server: { port: 8080 }\n"
+    }
+  ],
+  "observe": "server",
+  "orderInvariant": true,
+  "expected": "{\n  host: \"127.0.0.1\"\n  port: 8080\n}"
+}

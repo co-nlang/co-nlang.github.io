@@ -16,7 +16,8 @@
 3. 那句話裡的**三個動詞就是站的骨架**——辨認 / 觀測 / 組合。不是四個平行的維度,是一個問題長出三隻手(§2)。
 4. n/ 的哲學命題是**假設,不是結論**。先寫下能說得最清楚的那句話,再去找能撐住它的數學,再去實作、去檢驗(§3)。
 5. 因此真正的差異點不是「我們更快/更安全」,是「**你可以看著我們出錯**」——而這有東西可以指(§4)。
-6. 30 秒入口是**組合**那一隻:「你的兩個程式可以相加」。可查、不需背景,而且會自己長出三個後果(§5)。
+6. 30 秒入口是**組合**那一隻:「你的兩個程式可以相加」。這裡的「相加」必須立刻落到
+   `&` 的可跑例子,不能讓人誤讀成算術 `+`;它可查、不需背景,而且會自己長出三個後果(§5、§9.6.2)。
 7. **CUE 是祖先不是對手**,而這件事已經寫在語料裡了——承認它比防守它強(§6)。
 8. 石板的問題**不是內容是位置**:在 landing 上它顯得沒被賺到,在「方法」那一節它是一手史料(§7)。
 
@@ -360,14 +361,194 @@ CHANGELOG 差的是**狀態**(什麼變了);故事提交差的是**信念**(我�
 `top` 就是那條審計行,它每天在做值層做不到的事,樣本 39 個。
 (此為 027 的印證,不是新發現;寫在這裡是因為它是 blog 語調的來源。)
 
+### 9.6 對照 Wave 1 實作：不是換文案，是拆開兩種導航（2026-08-20）
+
+用戶已裁 §10 #1：**Hero 放入口句「你的兩個程式，可以相加」；核心論旨放下一節展開。**
+這等於接受第一屏不放最完整的句子，換取一個能在 30 秒內驗證的入口。
+
+#### 9.6.1 現行頁面與本檔逐項對照
+
+〔讀／量〕`src/components/Landing.astro`、`src/i18n/landing.ts`、導覽、CI 與現版引擎：
+
+| 本檔要的形狀 | Wave 1 現況 | 處置 |
+| :--- | :--- | :--- |
+| Hero＝可查入口 | Hero 仍是「沒有執行，只有觀測」＋幾何本體論 | 換入口句；哲學句搬到方法／論旨 |
+| 入口後立刻展示組合 | `why` 已有 `&` demo，但框成「資料、型別、邏輯是同一物」 | 沿用 `CodeBlock` 與誠實閘，改成兩來源收斂 |
+| 三個動詞＝論旨 | 頁面沒有這一層 | 新增辨認／觀測／組合；每個動詞只給一個可指的機制 |
+| 石板在方法裡 | `StoneTablet` 是 Hero 後的獨立第二屏，而且視覺權重最大 | 保留內容，搬進方法；元件須拆掉自己那層 `<section>` 外殼或提供嵌入模式 |
+| 「你可以看著我們出錯」＋證據 | footer 只有 snippet receipt；blog 是空 placeholder | 第一弧只放性質與真實 repo 指向，不假裝 blog 已存在 |
+| 四維退場 | 四張卡同時是敘事與 `/language`、`/discovery`、`/tools`、`/research` 路由入口 | **不能機械換成三張卡**；見下一節 |
+| 加入在最後 | 已在最後，但長度接近主論旨，且示例用未定義 `@observer` | 保留入口、縮短；移除或重寫該示例 |
+
+另有三個「第一次來的人會碰到、原討論未記」的邊界：
+
+1. 六個內頁（含 blog）目前全是 placeholder；Header 卻把五個當成熟目的地。點進去會讓
+   「這是能用的東西嗎」得到負面答案。第一弧應改成**誠實標狀態**或暫時直連已有的
+   spec／engine／research repo，不用空頁冒充導覽。
+2. 手機寬度 `<820px` 時全部 nav link 隱藏，只剩語言與主題切換，沒有 menu。
+   所以 landing 自己必須承擔完整去向，不能只在桌面 Header 補連結。
+3. `<meta description>` 仍是「資料、型別、邏輯是同一個幾何物件」；即使畫面改了，搜尋
+   與分享摘要仍會講舊故事。它屬同一弧，不是 SEO 後續。
+
+#### 9.6.2 「兩個程式可以相加」在現引擎上到底是真的哪一種
+
+**「相加」是入口比喻，運算子不是算術 `+`，是格的 `&`。頁面必須在同一屏說清楚。**
+
+〔量，`oo v0.26.1-627-g715328a+`〕兩個真檔案：
+
+```nlang
+;; server.n
+server: { host: "127.0.0.1" }
+```
+
+```nlang
+;; deploy.n
+server: { port: 8080 }
+```
+
+```text
+$ oo run server.n deploy.n --observe server
+{
+  host: "127.0.0.1"
+  port: 8080
+}
+```
+
+交換檔案順序，輸出逐字相同。這比把兩個值先寫進同一檔更能撐住 Hero 的「兩個程式」。
+但它也暴露一個施工前置：現行 `verify-snippets.mjs` 只從 `landing.ts` 抽一個 template string
+當一支程式跑，**驗不了兩個來源檔**。Hero 上線前，誠實閘必須先能以同一案例餵多個輸入；
+不得退回手寫一張平行測試表。
+
+較穩的 artifact 形狀是：頁面與閘共讀同一組 snippet fixture（兩個 `.n` 來源＋observe＋
+expected），UI 只替它加雙語標籤。如此「被 render 的」與「被驗的」仍是同一份東西。
+
+#### 9.6.3 三個動詞不是三個網站入口
+
+現行四張 `dims` 卡做了兩份工作：
+
+1. 解釋 n/ 是什麼；
+2. 把人送往 language／discovery／tools／research。
+
+三個動詞只適合第一份工作。它們是同一論旨的三個面，不是三種讀者，也不該各自長成
+一個 placeholder 內頁。新的 landing 要明拆兩層：
+
+```text
+論旨層：辨認 → 觀測 → 組合
+去向層：我想試用 / 讀規格 / 看引擎 / 讀研究 / 看演進記錄 / 參與
+```
+
+`discovery` 不再被升格成一種讀者；它回到「辨認如何跨機器」的深入路徑。
+`language`／`tools`／`research` 仍可保留為資訊架構，只是不再叫三／四個「維度」。
+
+#### 9.6.4 Hero 的圖可以留，但理由要換成真的
+
+`HeroCanvas` 雖然畫的是 4D tesseract，元件自己的承重說明其實是「你看見的是高維結構的
+投影＝觀測」。因此「四個維度」退場不必連圖一起刪；它不是四張內容卡的插圖。
+
+但第一次來的人不會讀 source comment。若保留，文案或無障礙旁註不必解釋 tesseract，
+只需讓它服務「同一結構，觀測得到投影」；不能再讓「4D」暗中替舊資訊架構續命。
+
+#### 9.6.5 誠實閘今天有三個洞，不是紅燈但會擋這一弧
+
+〔量 2026-08-20〕本機 `npm run build` 14 頁全綠；`npm run verify:snippets` 為
+**12/12**，使用 `oo v0.26.1-627-g715328a+`。但：
+
+1. 部署 workflow 的 `OO_TAG` 盤點時仍固定在 **v0.11.1**。footer 不會說謊（它會誠實印舊版），
+   但官網正在拿十五個 minor 版以前的引擎替今天背書。**第一實作弧已升至 v0.26.1**，仍採
+   bare release，不浮動追 `top`。
+2. extractor 盤點時只認屬性名 `code`／`demoCode`。新 schema 若把欄位改叫 `source`，網站可
+   顯示一段完全沒被驗的程式而閘仍綠。**第一實作弧已改為：所有含結果宣稱的 template
+   literal 皆納入；多檔案例則由被頁面 import 的 JSON fixture 反向發現。**
+3. 原 Join 的 `@observer` 是未定義名義標籤；閘在中英文各報一個 `use-without-def` warning，
+   只因 open-world 政策而不失敗。Q-033 正在裁這類名字，**第一實作弧已拿掉該示例**。
+
+證據區第一弧因此只承諾今天真的有的收據：**頁面範例＋實跑引擎版本**。workspace tests、
+conformance 數與故事篇數尚未由建站流程產生，不先手寫進畫面。
+
+#### 9.6.6 CUE 段需要降一個聲量，並提高一個精度
+
+〔讀 [CUE Language Specification](https://cuelang.org/docs/reference/spec/)／
+[Introduction](https://cuelang.org/docs/introduction/)／
+[The Logic of CUE](https://cuelang.org/docs/concept/the-logic-of-cue/)，2026-08-20〕CUE 自己
+明文把值放在 lattice、以 `&` 做 commutative／associative／idempotent unification，也明文
+支援 multi-source constraint pipelines。故「兩個程式可以相加」**不是對 CUE 的差異點**；
+它是 n/ 最誠實的入口，因為這正是祖先留下的門。
+
+可公開的精確說法：
+
+> n/ 從 CUE 已證明有用的格與合一出發，再追問：同一個可合併的值如果還要有耐久身分、
+> 歷史、觀測語義，並跨機器交換，會長成什麼？
+
+原 §6 的「CUE **刻意不去**時間／空間」目前只有我們對邊界的理解，沒有 CUE 官方來源證明
+「刻意」。公開時應刪掉這個意圖歸因。`⊥` 的差異也應寫成可驗的行為：CUE 官方稱 bottom
+「通常表示 error」；n/ 現版可把**帶 ⊥ 欄位的 Combo**固化進歷史並回讀。不要寫成
+「CUE 沒有 bottom 值」——兩邊都有 lattice bottom。
+
+#### 9.6.7 第一弧建議骨架（落到現有 component）
+
+```text
+Hero
+  「你的兩個程式，可以相加。」
+  HeroCanvas 沿用；CTA → #compose
+
+Compose（新）
+  兩個真來源 → & → 同一結果；順序交換不變
+  旁邊一小句 CUE lineage，不在這裡展開比較
+
+Thesis（新）
+  核心問題
+  辨認 / 觀測 / 組合（三個敘事卡，不連到三個假內頁）
+
+Method（新外殼，沿用 StoneTablet 內容）
+  假設 → 導出 → 檢驗 → 被推翻
+  石板在這裡取得一手史料身分
+
+Evidence（新）
+  snippet receipt + engine version
+  一則真故事提交；更多記錄先連 repo history，blog 上線後再換
+
+Paths（重寫 dims，不再叫維度）
+  試用 / 規格 / 引擎 / 研究 / 演進記錄
+  未完成內頁不冒充完成品
+
+Join（縮短現有內容）
+  repo 與治理入口；拿掉 @observer 範例
+```
+
+這一弧可沿用 `HeroCanvas`、`CodeBlock`、石板本體、theme、i18n 路由與 footer receipt；
+主要新工作是 `LandingContent` schema、landing section 順序、multi-file snippet artifact／gate、
+石板嵌入模式與 `dims`→`paths` 樣式。**不需要重做視覺系統。**
+
+### 9.7 第一實作弧已落地（2026-08-20，尚未 commit）
+
+落地形狀與 §9.6.7 相同：Hero → Compose → Thesis → Method／石板 → Evidence → Paths → Join。
+沿用 HeroCanvas、CodeBlock、石板視覺、theme 與 footer receipt；沒有重做視覺系統。
+
+〔量〕：
+
+- `src/snippets/two-programs-compose.json` 是頁面與 gate 共讀的兩來源 artifact；正序與反序
+  **兩次皆得同一結果**。
+- `npm run verify:snippets`：**1/1 宣稱綠**，且另跑反序控制；引擎
+  `oo v0.26.1-627-g715328a+`。
+- `npm run build`：**14 頁全綠**，中英文 landing 皆產出六個新 section。
+- 部署 pin：`v0.11.1` → **`v0.26.1`**。
+- Header 改為 landing 敘事錨點；手機新增真的 menu，不再只有語言／主題按鈕。
+- placeholder 路由仍保留（不破壞既有 URL），但 landing 與 Header 不再把它們冒充成熟文件；
+  Paths 直連目前真的存在的四個 GitHub 去向。
+- Evidence 只顯示 gate receipt 的宣稱數與引擎版號；workspace／conformance／故事總數未手寫。
+
+明確未做：blog renderer、playground、placeholder 內頁、workspace／conformance 收據、獨立
+文件站。這些沒有被 landing 新結構偷偷吸收。
+
 ---
 
 ## 10. 開放問題
 
-1. **§5 的入口句與 §2 的論旨,誰放 Hero?** 本檔傾向入口句放 Hero、論旨放「為什麼」,
-   但那等於承認**第一屏不說最重要的事**。這個取捨要用戶裁。
-2. **「證據」那一節要顯示什麼數字?** 測試數與符合性數是引擎的,官網怎麼取得而不手寫?
-   (候選:CI 在建站時順便跑一次並寫進收據,與 footer 同機制。)
-3. **英文版是翻譯還是另寫?** 三個動詞那句話的英文不好翻,而它是骨架。
+1. ~~**§5 的入口句與 §2 的論旨,誰放 Hero?**~~ **已裁（2026-08-20）**：入口句放 Hero，
+   論旨放下一節；接受第一屏先給可驗入口，不先講完整命題。見 §9.6。
+2. **「證據」那一節要顯示什麼數字?** **第一弧已答一半**：只顯示現有 gate 真產出的
+   snippet 數與引擎版本。workspace tests／conformance 若要上頁，仍須先由 CI 產收據，不手寫。
+3. ~~**英文版是翻譯還是另寫?**~~ **第一弧已採語義同構、各自成句**：段落順序與證據相同，
+   英文不逐字硬譯中文；後續仍需由英文母語讀者做 first-encounter 測試。
 4. `docs.` / `blog.` 子網域的分界線在哪:**官網停在哪裡,文件從哪裡開始?**
 5. 手冊(§9.2)是**修**、**重寫**、還是**封存**?在有人要用之前,它是資產還是負債?

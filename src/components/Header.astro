@@ -7,18 +7,24 @@ const tr = t(lang);
 const pathname = Astro.url.pathname;
 const other = altHref(pathname, lang);
 const otherLabel = lang === 'zh-TW' ? 'EN' : '中';
+const menuLabel = lang === 'zh-TW' ? '選單' : 'Menu';
+const switchLanguageLabel = lang === 'zh-TW' ? '切換語言' : 'Switch language';
+const switchThemeLabel = lang === 'zh-TW' ? '切換明暗主題' : 'Switch theme';
 ---
 <header class="bar">
   <div class="wrap">
     <a class="brand" href={localize('/', lang)}>n<span class="sl">/</span></a>
-    <nav>
-      <a class="navlink" href={localize('/language', lang)}>{tr('nav.language')}</a>
-      <a class="navlink" href={localize('/discovery', lang)}>{tr('nav.discovery')}</a>
-      <a class="navlink" href={localize('/tools', lang)}>{tr('nav.tools')}</a>
-      <a class="navlink" href={localize('/research', lang)}>{tr('nav.research')}</a>
-      <a class="navlink" href={localize('/join', lang)}>{tr('nav.join')}</a>
-      <a class="toggle" href={other} aria-label="Switch language">{otherLabel}</a>
-      <button class="toggle" id="theme" type="button" aria-label="Switch theme">◐</button>
+    <nav aria-label={menuLabel}>
+      <div class="navlinks" id="site-nav">
+        <a href={localize('/#compose', lang)}>{tr('nav.compose')}</a>
+        <a href={localize('/#thesis', lang)}>{tr('nav.thesis')}</a>
+        <a href={localize('/#method', lang)}>{tr('nav.method')}</a>
+        <a href={localize('/#evidence', lang)}>{tr('nav.evidence')}</a>
+        <a href={localize('/#paths', lang)}>{tr('nav.paths')}</a>
+      </div>
+      <button class="toggle menu-toggle" id="menu" type="button" aria-controls="site-nav" aria-expanded="false">{menuLabel}</button>
+      <a class="toggle" href={other} aria-label={switchLanguageLabel}>{otherLabel}</a>
+      <button class="toggle" id="theme" type="button" aria-label={switchThemeLabel}>◐</button>
     </nav>
   </div>
 </header>
@@ -34,6 +40,20 @@ const otherLabel = lang === 'zh-TW' ? 'EN' : '中';
       var next = cur === 'dark' ? 'light' : 'dark';
       root.setAttribute('data-theme', next);
       try { localStorage.setItem('theme', next); } catch (e) {}
+    });
+  })();
+
+  (function () {
+    var btn = document.getElementById('menu');
+    var links = document.getElementById('site-nav');
+    if (!btn || !links) return;
+    btn.addEventListener('click', function () {
+      var open = links.classList.toggle('open');
+      btn.setAttribute('aria-expanded', String(open));
+    });
+    links.addEventListener('click', function () {
+      links.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
     });
   })();
 </script>

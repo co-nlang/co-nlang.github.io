@@ -24,8 +24,10 @@ npm run verify:snippets
 OO_BIN=/path/to/oo npm run verify:snippets
 ```
 
-**The gate derives its cases from `src/i18n/landing.ts`.** There is no parallel
-table to keep in sync — the first version had one, and it passed 7/7 while the
+**The gate derives its cases from what the landing page renders.** Inline claims
+come from `src/i18n/landing.ts`; multi-file examples are shared JSON artifacts
+under `src/snippets/` imported by `Landing.astro`. There is no parallel table to
+keep in sync — the first version had one, and it passed 7/7 while the
 site shipped `5 |> /double |> /inc ;; → 11` with `/inc` never defined (the
 engine yields `10`). A gate that covers a different set than the site renders
 can be green and wrong at the same time.
@@ -49,6 +51,7 @@ reproduce.
 ```
 src/
   i18n/          ui.ts (nav/footer/page meta + routing helpers), landing.ts (landing copy, both langs)
+  snippets/      rendered multi-file examples; the honesty gate runs these exact artifacts
   lib/           highlight.ts (dependency-free n/ syntax highlighter)
   components/    HeroCanvas · StoneTablet · CodeBlock · Header · Footer · Landing · DimensionPage
   layouts/       BaseLayout.astro (head, theme init, header/footer)
@@ -73,5 +76,8 @@ Both light and dark themes are first-class; the viewer's toggle persists to
 
 ## Status
 
-Wave 1 skeleton: Landing (both langs) + placeholder dimension pages. Dimension
-inner pages, the blog system, and CI verification land in later waves.
+Wave 2 landing: a verifiable two-program composition leads into the shared
+question (identify / observe / compose), method, evidence, and honest paths to
+the live repositories. Inner documentation pages, the blog renderer, and the
+playground remain later waves; their existing routes are placeholders and are
+not presented as finished destinations from the landing page.

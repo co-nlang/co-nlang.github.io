@@ -27,6 +27,11 @@ export function altHref(pathname: string, current: Lang): string {
 
 export const ui = {
   'zh-TW': {
+    'nav.compose': '先看合併',
+    'nav.thesis': '核心問題',
+    'nav.method': '方法',
+    'nav.evidence': '證據',
+    'nav.paths': '入口',
     'nav.why': '為什麼',
     'nav.dims': '維度',
     'nav.join': '加入我們',
@@ -41,6 +46,11 @@ export const ui = {
     'page.placeholder': '這個維度的內頁正在建置中。目前先佔位——內容會從規格書與引擎逐頁編織進來,所有 n/ 範例都會先經 oo 實跑驗證才上架。',
   },
   en: {
+    'nav.compose': 'See the merge',
+    'nav.thesis': 'The question',
+    'nav.method': 'Method',
+    'nav.evidence': 'Evidence',
+    'nav.paths': 'Explore',
     'nav.why': 'Why',
     'nav.dims': 'Dimensions',
     'nav.join': 'Join',

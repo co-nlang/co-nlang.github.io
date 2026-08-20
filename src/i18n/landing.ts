@@ -1,120 +1,187 @@
 import type { Lang } from './ui';
 
-export interface TriItem { role: string; name: string; code: string }
-export interface DimItem { idx: string; title: string; body: string; tag: string; honest?: string; href: string }
-export interface Trait { n: string; title: string; body: string }
+export interface ThesisItem {
+  mark: string;
+  verb: string;
+  question: string;
+  body: string;
+}
+
+export interface MethodStep {
+  n: string;
+  title: string;
+  body: string;
+}
+
+export interface PathItem {
+  mark: string;
+  title: string;
+  body: string;
+  tag: string;
+  href: string;
+}
 
 export interface LandingContent {
   meta: { title: string; description: string };
   hero: { eyebrow: string; headline: string; lead: string; cta1: string; cta2: string };
+  compose: {
+    eyebrow: string;
+    title: string;
+    lead: string;
+    sourceLabel: string;
+    resultLabel: string;
+    commandLabel: string;
+    lineage: string;
+  };
+  thesis: { eyebrow: string; title: string; lead: string; items: ThesisItem[] };
+  method: {
+    eyebrow: string;
+    title: string;
+    lead: string;
+    tabletIntro: string;
+    steps: MethodStep[];
+  };
   tablet: { verses: string[]; attrib: string };
-  why: { eyebrow: string; title: string; lead: string; tri: TriItem[]; demoCap: string; demoCode: string; note: string };
-  dims: { eyebrow: string; title: string; lead: string; items: DimItem[] };
-  join: { eyebrow: string; title: string; coEq: string; lead: string; traits: Trait[]; code: string; coda: string };
+  evidence: {
+    eyebrow: string;
+    title: string;
+    lead: string;
+    receipt: string;
+    noReceipt: string;
+    storyEyebrow: string;
+    storyTitle: string;
+    storyBody: string;
+    storyTag: string;
+    storyHref: string;
+  };
+  paths: { eyebrow: string; title: string; lead: string; items: PathItem[] };
+  join: { eyebrow: string; title: string; lead: string; coda: string };
 }
 
 const zh: LandingContent = {
   meta: {
-    title: 'n/ — 語義作業系統',
-    description: '一個基於格論的宣告式語言:資料、型別、邏輯是同一個幾何物件,從不同角度觀測。',
+    title: 'n/ — 你的兩個程式，可以相加',
+    description: 'n/ 是從格論出發的語義作業系統：程式可以合併、由內容辨認，並在觀測時收斂。',
   },
   hero: {
     eyebrow: '語義作業系統 · @co-nlang',
-    headline: '沒有執行，只有觀測。真理是收斂之點。',
-    lead: '一個基於格論的宣告式語言 —— 資料、型別、邏輯是同一個幾何物件，只是觀測的角度不同。你不寫步驟，你雕刻約束；交集剩下的形狀就是結果。',
-    cta1: '探索語言',
-    cta2: '加入我們',
+    headline: '你的兩個程式，可以相加。',
+    lead: '在 n/，這個加法寫作 &。它不是把文字接在一起，而是讓兩份各自成立的程式收斂成同一個值：相容的資訊合併，矛盾留下原因。',
+    cta1: '看它們合併',
+    cta2: '為什麼這樣設計',
+  },
+  compose: {
+    eyebrow: '先看一件真的事',
+    title: '不是拼接，是有定義的合併',
+    lead: '兩個檔案各自只知道一半。oo 把它們放進同一個宇宙，以格的交運算收斂；交換檔案順序，答案不變。',
+    sourceLabel: '來源',
+    resultLabel: '觀測結果',
+    commandLabel: '實跑',
+    lineage: '<strong>如果你熟悉 CUE：</strong>這份相似是我們承認的祖先，不是要藏起來的對手。n/ 從格與合一出發，繼續追問耐久身分、歷史、觀測，以及跨機器交換。',
+  },
+  thesis: {
+    eyebrow: '它真正追問的事',
+    title: '一個結構，能否不靠外部名稱，而由自身的關係被辨認、觀測與組合？',
+    lead: '這不是三個平行功能，而是同一個問題長出的三隻手。數學不是第四隻手；它是這三件事接受檢驗的地方。',
+    items: [
+      { mark: '%id', verb: '辨認', question: '不靠名字，怎麼知道這是哪一個東西？', body: '內容形成位址；值、根與提交可以由自己的結構被指認。名字是入口，不是身分。' },
+      { mark: '<<>>', verb: '觀測', question: '不先把整個世界跑完，怎麼知道它是什麼？', body: '求值沿觀測路徑發生。沒被要求的部分保持惰性；看不清楚時，結果也必須誠實地說不清楚。' },
+      { mark: '&', verb: '組合', question: '兩個結構相遇，結果由誰決定？', body: '格律決定收斂。相容的約束變得更精確；不相容時得到帶 %cause 的底，而不是偷偷覆寫。' },
+    ],
+  },
+  method: {
+    eyebrow: '方法',
+    title: '哲學命題是假設，不是結論',
+    lead: '在理論與實作還沒能支撐一個設計以前，最清楚的往往只是一句哲學性的假設。n/ 把它先寫下來，再讓數學、引擎與失敗記錄逐步檢驗。',
+    tabletIntro: '下面這塊石板不是答案。它是專案在還不知道答案以前，替自己留下的原始假設。',
+    steps: [
+      { n: '01', title: '假設', body: '先把尚未證明、但足以指引設計的那句話寫清楚。' },
+      { n: '02', title: '導出', body: '從它導出格、帶因果的底、call-by-observation 與內容身分。' },
+      { n: '03', title: '檢驗', body: '把宣稱交給規格、探針、符合性向量和真實引擎。' },
+      { n: '04', title: '留下被推翻的地方', body: '錯誤不是從歷史抹掉；修正移動了什麼，與程式碼一起記錄。' },
+    ],
   },
   tablet: {
     verses: [
       '如其在頂（<span class="car">_</span>），如其在底（<span class="car">_|_</span>）；<br>如其在全集之虛空，如其在原子之真實。<br><span class="em">以成那唯一之奇蹟 —— 收斂。</span>',
       '宇宙皆 Combo，欄位即可能之源，原子即存在之果。<br><span class="em">交集以純化真理，聯集以展開萬物。</span>',
-      '銜尾蛇自吞其尾：其父為定義，其母為收斂。<br><span class="em">其力在於:若它能被觀測，它便已是真實。</span>',
+      '銜尾蛇自吞其尾：其父為定義，其母為收斂。<br><span class="em">其力在於：若它能被觀測，它便已是真實。</span>',
     ],
     attrib: '— 規格書序言 · Specification Preface',
   },
-  why: {
-    eyebrow: '為什麼是 n/',
-    title: '資料、型別、邏輯 —— 同一個東西',
-    lead: '傳統上你用 YAML 寫設定、TypeScript 寫型別、Python 寫驗證。<br>n/ 把三者透過一個共通結構(Combo)映射到「格」上，再用單一運算 —— 集合交集(<code style="color:var(--gold)">&</code>)—— 驅動全部。',
-    tri: [
-      { role: '存有', name: 'Data', code: `;; 存在
-age: 25` },
-      { role: '邊界', name: 'Type', code: `;; 約束，非註記
-25 & @int   ;; → 25
-"hi" & @int
-;; → _|_ (%cause: #conflict)` },
-      { role: '變換', name: 'Logic', code: `;; 態射與管道
-/double: x -> x * 2
-/inc: x -> x + 1
-out: 5 |> /double |> /inc
-;; → 11` },
-    ],
-    demoCap: '收斂，即是那唯一之物',
-    demoCode: `;; 型別即約束，不是註記
-age: 25 & @int      ;; → 25
-
-;; 兩個視角合併 = 交集
-{ age: 25 } & { age: @int }
-;; → { age: 25 }
-
-;; 矛盾坍縮為帶因果的空集
-{ age: 25 } & { age: 30 }
-;; → _|_ (%cause: #conflict)`,
-    note: '<b style="color:var(--indigo)">衝突不是崩潰。</b> 當約束無法相容，結果坍縮為 <code class="bt">_|_</code> —— 一個帶著 <code class="op">%cause</code> 因果標記的空集。錯誤在 n/ 裡不是例外，而是邏輯的空集合。',
+  evidence: {
+    eyebrow: '不用先相信我們',
+    title: '你可以看著我們出錯',
+    lead: '每一弧都留下工單、探針、驗收與故事提交。重點不是展示謙虛，而是讓一句宣稱被推翻時，修正造成的代價仍然找得到。',
+    receipt: '本頁的 {claims} 項結果宣稱，已由 <strong>{engine}</strong> 實跑；沒有收據，這行就不會出現。',
+    noReceipt: '本次建置沒有誠實閘收據，因此不展示任何驗證數字。',
+    storyEyebrow: '最近一則引擎故事',
+    storyTitle: 'One name, two answers',
+    storyBody: '同一個名字，裸讀與投影曾得到兩個答案。前一版的探針只問 evolve 有沒有報錯，卻從未觀測真正失敗的那條路。修正與那支失明的探針一起留在提交裡。',
+    storyTag: '閱讀完整故事提交 →',
+    storyHref: 'https://github.com/co-nlang/nlang-tools/commit/bf0776944df7682e6aa608557fa41a0cc4cce910',
   },
-  dims: {
-    eyebrow: '四個維度',
-    title: '同一物件，不同角度',
-    lead: 'n/ 橫跨計算、數學、物理。選一個角度進入，深度自己決定。',
+  paths: {
+    eyebrow: '從你在意的問題進去',
+    title: '這裡不是四個維度，是幾條不同的路',
+    lead: '首頁到這裡已經把問題說完。接下來依你想做的事選入口；未完成的內頁不會假裝成文件。',
     items: [
-      { idx: '01', href: '/language', title: '語言 · 格論',
-        body: 'Combo 與 Cocoon、交集 <code class="op">&</code> 與聯集 <code class="jn">|</code>、態射與管道、Top <code class="op">_</code> 與 Bottom <code class="bt">_|_</code>。語言的完整語法與哲學。',
-        tag: '語法速覽 →' },
-      { idx: '02', href: '/discovery', title: '發現協議 · LADD',
-        body: 'CAID 內容定址、氣味搜尋、語義引力。一個「自帶語義理解」的去中心化發現網路 —— 指紋在下載之前就能感知彼此的距離。',
-        tag: '閱讀協議 →' },
-      { idx: '03', href: '/tools', title: '工具 · oo 引擎',
-        body: '參考引擎 <code class="op">oo</code> —— 一個惰性、call-by-observation 的直譯器。<code>run</code> / <code>repl</code> / <code>fmt</code> / <code>lint</code>。從這裡開始跑第一支 n/ 程式。',
-        tag: '開始使用 →' },
-      { idx: '04', href: '/research', title: '研究 · 障礙階梯',
-        body: '上同調障礙階梯:把型別衝突、拜占庭錯誤、身分捏造讀成同一台幾何機器的不同階。22 篇論文 + 白皮書 Paper N。',
-        honest: '誠實標記:階梯的部分對應為 correspondence-level 洞見，關鍵環節(如 item 21)是 <i>reduction</i> 而非已封閉的定理。我們把每個「本質」宣稱都掛上它在 H* 的強度標籤 —— 這條防火牆是語言哲學的一部分，不是行銷話術。',
-        tag: '進入深水區 →' },
+      { mark: 'oo', title: '跑起來', body: '安裝參考引擎，從 run、repl、fmt 與 lint 開始。', tag: '前往引擎倉 →', href: 'https://github.com/co-nlang/nlang-tools' },
+      { mark: '§', title: '讀規格', body: '語法、語義、實現契約與符合性要求都在同一部法典。', tag: '前往規格書 →', href: 'https://github.com/co-nlang/nlang-spec' },
+      { mark: 'H*', title: '看研究', body: '從白皮書到障礙階梯；定理、reduction 與 correspondence 分開標記。', tag: '進入研究倉 →', href: 'https://github.com/co-nlang/research' },
+      { mark: 'git', title: '看它怎麼改變', body: '故事提交記錄每一弧之前相信什麼、哪個量測推翻它，以及代價。', tag: '閱讀演進記錄 →', href: 'https://github.com/co-nlang/nlang-tools/commits/top' },
     ],
   },
   join: {
-    eyebrow: '加入我們',
-    title: '語言是極限，人是餘極限',
-    coEq: '<span class="k">co:</span> #collective <span class="jn">|</span> #colimit',
-    lead: '在 n/ 中，沒有單一視角能握住全部真理 —— 這是一條定理，不是口號。我們不列能力清單；我們尋找願意這樣觀測世界的人。每個人都具備這些特質——差別只在你願不願意。',
-    traits: [
-      { n: '_|_', title: '誠實', body: '衝突不是恥辱——但你得帶著原因。說「我不知道」是合法的觀測結果,不是需要隱藏的缺陷。' },
-      { n: '&', title: '收斂', body: '願意把自己的視角拿去和別人交集——即使結果比你原本相信的更小。那是真理的形狀。' },
-      { n: '|', title: '接納', body: '不急著坍縮別人的疊加態。歧異是合法的存在,不是待消滅的敵人。' },
-      { n: '<<>>', title: '耐心', body: '不強迫坍縮。觀測,讓真理自己收斂——結構在那裡,你看到的時候它就已經是真實。' },
-      { n: '_', title: '開放', body: '未知不是錯誤,是還沒被觀測到的可能性。萬有集合是每個人的起點。' },
-      { n: '#blur', title: '漸進', body: '模糊的真理不是謊言,是等待更多觀測與能量投入的莊嚴邀請。' },
-    ],
-    code: `;; 每個人都是 _ (top/萬有集合)
-;; 差別只在你願意觀測哪些面向
-you: _
-you & @observer   ;; 收斂，即是那唯一之物`,
-    coda: '引導期的治理細節仍在收斂中。目前以 GitHub 為物理實體，規格書為法典。結構會從實踐中湧現——不先發明語法。',
+    eyebrow: '參與',
+    title: '把你的觀測帶進來',
+    lead: '規格、引擎與研究都在 GitHub 上公開形成。你可以從一個反例、一支探針、一條規格問題，或一個完全不同的視角開始。',
+    coda: '引導期的治理細節仍在收斂中。目前以 GitHub 為物理實體，規格書為法典；不先把尚未長出的結構寫成完成品。',
   },
 };
 
 const en: LandingContent = {
   meta: {
-    title: 'n/ — A Semantic Operating System',
-    description: 'A lattice-theoretic declarative language where data, type, and logic are one geometric object, seen from different angles.',
+    title: 'n/ — Your two programs can be added',
+    description: 'n/ is a lattice-born semantic operating system: programs compose, content identifies itself, and values converge when observed.',
   },
   hero: {
     eyebrow: 'A Semantic Operating System · @co-nlang',
-    headline: 'There is no execution, only observation. Truth is the point of convergence.',
-    lead: 'A lattice-theoretic declarative language where data, type, and logic are one geometric object seen from different angles. You don’t write steps — you sculpt constraints; the shape their intersection leaves is the result.',
-    cta1: 'Explore the language',
-    cta2: 'Join us',
+    headline: 'Your two programs can be added.',
+    lead: 'In n/, that addition is written &. It does not concatenate text. It lets two independently valid programs converge into one value: compatible information combines; contradictions keep their cause.',
+    cta1: 'Watch them combine',
+    cta2: 'Why design it this way?',
+  },
+  compose: {
+    eyebrow: 'Start with something verifiable',
+    title: 'A defined merge, not concatenation',
+    lead: 'Each file knows only half. oo places both in one universe and converges them with lattice meet. Reverse the file order and the answer stays the same.',
+    sourceLabel: 'Source',
+    resultLabel: 'Observed result',
+    commandLabel: 'Run it',
+    lineage: '<strong>If you know CUE:</strong> the resemblance is an ancestry we acknowledge, not a rival we hide. n/ begins with lattices and unification, then asks about durable identity, history, observation, and exchange across machines.',
+  },
+  thesis: {
+    eyebrow: 'The question underneath',
+    title: 'Can a structure be identified, observed, and composed through its own relations, without relying on an external name?',
+    lead: 'These are not three parallel features. They are three hands grown from one question. Mathematics is not a fourth hand; it is where the other three are tested.',
+    items: [
+      { mark: '%id', verb: 'Identify', question: 'Without a name, how do we know which thing this is?', body: 'Content forms its address. Values, roots, and commits can be identified by their own structure. A name is an entry point, not an identity.' },
+      { mark: '<<>>', verb: 'Observe', question: 'Without running the whole world first, how do we know what it is?', body: 'Evaluation follows the path being observed. What was not requested remains lazy; when the view is incomplete, the result must say so honestly.' },
+      { mark: '&', verb: 'Compose', question: 'When two structures meet, who decides the result?', body: 'The lattice laws decide convergence. Compatible constraints become more precise; incompatible ones yield caused bottom instead of a silent overwrite.' },
+    ],
+  },
+  method: {
+    eyebrow: 'Method',
+    title: 'The philosophical claim is a hypothesis, not a conclusion',
+    lead: 'Before theory and implementation can support a design, the clearest thing available may be a philosophical hypothesis. n/ writes it down first, then lets mathematics, the engine, and the record of failure test it.',
+    tabletIntro: 'The tablet below is not an answer. It is a primary record of what the project wrote down before it knew whether the answer would hold.',
+    steps: [
+      { n: '01', title: 'Hypothesize', body: 'State the unproven sentence clearly enough to guide a design.' },
+      { n: '02', title: 'Derive', body: 'Let it lead to lattices, caused bottom, call-by-observation, and content identity.' },
+      { n: '03', title: 'Test', body: 'Submit every claim to the specification, probes, conformance vectors, and a real engine.' },
+      { n: '04', title: 'Keep the reversals', body: 'Do not erase mistakes from history; record what the correction actually moved beside the code.' },
+    ],
   },
   tablet: {
     verses: [
@@ -124,74 +191,34 @@ const en: LandingContent = {
     ],
     attrib: '— Specification Preface',
   },
-  why: {
-    eyebrow: 'Why n/',
-    title: 'Data, type, and logic — one and the same',
-    lead: 'You usually write config in YAML, types in TypeScript, validation in Python. n/ maps all three through one structure (Combo) onto a lattice, then drives everything with a single operation — set intersection (<code style="color:var(--gold)">&</code>).',
-    tri: [
-      { role: 'Existence', name: 'Data', code: `;; existence
-age: 25` },
-      { role: 'Boundary', name: 'Type', code: `;; a constraint, not an annotation
-25 & @int   ;; → 25
-"hi" & @int
-;; → _|_ (%cause: #conflict)` },
-      { role: 'Transformation', name: 'Logic', code: `;; morphism and pipe
-/double: x -> x * 2
-/inc: x -> x + 1
-out: 5 |> /double |> /inc
-;; → 11` },
-    ],
-    demoCap: 'convergence is the one thing',
-    demoCode: `;; a type is a constraint, not an annotation
-age: 25 & @int      ;; → 25
-
-;; merging two views = intersection
-{ age: 25 } & { age: @int }
-;; → { age: 25 }
-
-;; contradiction collapses to a caused empty set
-{ age: 25 } & { age: 30 }
-;; → _|_ (%cause: #conflict)`,
-    note: '<b style="color:var(--indigo)">Conflict is not a crash.</b> When constraints can’t reconcile, the result collapses to <code class="bt">_|_</code> — an empty set carrying a <code class="op">%cause</code>. An error here isn’t an exception; it’s the empty set of logic.',
+  evidence: {
+    eyebrow: 'Do not take our word for it',
+    title: 'You can watch us be wrong',
+    lead: 'Every arc leaves a work order, probes, acceptance evidence, and a story commit. The point is not performative humility. It is making the cost of a disproved claim traceable.',
+    receipt: 'The {claims} result claim(s) on this page were executed by <strong>{engine}</strong>. Without a receipt, this line does not appear.',
+    noReceipt: 'This build has no honesty-gate receipt, so it publishes no verification number.',
+    storyEyebrow: 'A recent engine story',
+    storyTitle: 'One name, two answers',
+    storyBody: 'The same name once produced one answer when read bare and another through projection. The previous probe asked only whether evolve reported an error; it never observed the path that failed. The repair and the blind probe remain together in the commit.',
+    storyTag: 'Read the full story commit →',
+    storyHref: 'https://github.com/co-nlang/nlang-tools/commit/bf0776944df7682e6aa608557fa41a0cc4cce910',
   },
-  dims: {
-    eyebrow: 'Four dimensions',
-    title: 'One object, different angles',
-    lead: 'n/ spans computation, mathematics, and physics. Pick an angle; choose your own depth.',
+  paths: {
+    eyebrow: 'Enter through the question you have',
+    title: 'Not four dimensions — several ways forward',
+    lead: 'The landing page has made its case. From here, choose what you want to do; unfinished inner pages will not pretend to be documentation.',
     items: [
-      { idx: '01', href: '/language', title: 'The Language · Lattice',
-        body: 'Combo and Cocoon, meet <code class="op">&</code> and join <code class="jn">|</code>, morphisms and pipes, Top <code class="op">_</code> and Bottom <code class="bt">_|_</code>. The full grammar and philosophy.',
-        tag: 'Quick reference →' },
-      { idx: '02', href: '/discovery', title: 'Discovery · LADD',
-        body: 'Content-addressed CAID, smell search, semantic gravity. A decentralized discovery network that senses distance between fingerprints before download.',
-        tag: 'Read the protocol →' },
-      { idx: '03', href: '/tools', title: 'Tools · the oo engine',
-        body: 'The reference engine <code class="op">oo</code> — a lazy, call-by-observation interpreter. <code>run</code> / <code>repl</code> / <code>fmt</code> / <code>lint</code>. Run your first n/ program here.',
-        tag: 'Get started →' },
-      { idx: '04', href: '/research', title: 'Research · the Ladder',
-        body: 'The cohomological obstruction ladder: type conflict, Byzantine faults, and identity forgery as rungs of one geometric machine. A 22-paper series plus the Paper N whitepaper.',
-        honest: 'Honest marking: parts of the ladder are correspondence-level insight, and key links (e.g. item 21) are <i>reductions</i>, not closed theorems. Every claim of “essence” carries its strength tag in H* — that firewall is part of the philosophy, not marketing.',
-        tag: 'Into the deep end →' },
+      { mark: 'oo', title: 'Run it', body: 'Install the reference engine and begin with run, repl, fmt, and lint.', tag: 'Open the engine repo →', href: 'https://github.com/co-nlang/nlang-tools' },
+      { mark: '§', title: 'Read the specification', body: 'Syntax, semantics, implementation contracts, and conformance requirements share one code of law.', tag: 'Open the specification →', href: 'https://github.com/co-nlang/nlang-spec' },
+      { mark: 'H*', title: 'Read the research', body: 'From the whitepaper to the obstruction ladder, with theorem, reduction, and correspondence marked separately.', tag: 'Enter the research repo →', href: 'https://github.com/co-nlang/research' },
+      { mark: 'git', title: 'See how it changes', body: 'Story commits record what each arc believed, which measurement overturned it, and what the correction cost.', tag: 'Read the history →', href: 'https://github.com/co-nlang/nlang-tools/commits/top' },
     ],
   },
   join: {
-    eyebrow: 'Join us',
-    title: 'The language is the limit; the people are the colimit',
-    coEq: '<span class="k">co:</span> #collective <span class="jn">|</span> #colimit',
-    lead: 'In n/ no single perspective holds the whole truth — that is a theorem, not a slogan. We don\'t list skill requirements; we look for people willing to observe the world this way. Everyone already has these traits — the difference is whether you choose to.',
-    traits: [
-      { n: '_|_', title: 'Honesty', body: 'Conflict is not shame — but you must carry the cause. "I don\'t know" is a valid observation, not a defect to hide.' },
-      { n: '&', title: 'Convergence', body: 'Willing to intersect your view with others — even when the result is smaller than what you believed. That is the shape of truth.' },
-      { n: '|', title: 'Acceptance', body: 'Don\'t rush to collapse someone else\'s superposition. Disagreement is a valid state, not an enemy to destroy.' },
-      { n: '<<>>', title: 'Patience', body: 'Don\'t force collapse. Observe, and let truth converge on its own — the structure is there; when you see it, it is already real.' },
-      { n: '_', title: 'Openness', body: 'Unknown is not error. It is possibility not yet observed. The universal set is everyone\'s starting point.' },
-      { n: '#blur', title: 'Gradual', body: 'A blurry truth is not a lie — it is a solemn invitation, awaiting more observation and energy.' },
-    ],
-    code: `;; everyone is _ — the universal set
-;; the difference is which facets you choose to observe
-you: _
-you & @observer   ;; convergence`,
-    coda: 'The governance details are still converging. For now, GitHub is the physical substrate; the specification is the law. Structure will emerge from practice — we don\'t invent syntax ahead of need.',
+    eyebrow: 'Participate',
+    title: 'Bring your observation',
+    lead: 'The specification, engine, and research all form in public on GitHub. Start with a counterexample, a probe, a specification question, or a view none of us has considered.',
+    coda: 'Bootstrap governance is still converging. GitHub is the physical substrate and the specification is the law; we do not present structures that have not grown yet as finished.',
   },
 };
 
