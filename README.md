@@ -24,10 +24,11 @@ npm run verify:snippets
 OO_BIN=/path/to/oo npm run verify:snippets
 ```
 
-**The gate derives its cases from what the landing page renders.** Inline claims
-come from `src/i18n/landing.ts`; multi-file examples are shared JSON artifacts
-under `src/snippets/` imported by `Landing.astro`. There is no parallel table to
-keep in sync — the first version had one, and it passed 7/7 while the
+**The gate derives its cases from what the site renders.** Inline claims come
+from files under `src/i18n/`; multi-file examples are shared JSON artifacts
+under `src/snippets/` imported by rendered Astro components. The verifier
+discovers both recursively. There is no parallel table to keep in sync — the
+first version had one, and it passed 7/7 while the
 site shipped `5 |> /double |> /inc ;; → 11` with `/inc` never defined (the
 engine yields `10`). A gate that covers a different set than the site renders
 can be green and wrong at the same time.
@@ -50,11 +51,11 @@ reproduce.
 
 ```
 src/
-  i18n/          ui.ts (nav/footer/page meta + routing helpers), landing.ts (landing copy, both langs)
+  i18n/          ui, landing, and Quick Start copy in both languages
   snippets/      rendered multi-file examples; the honesty gate runs these exact artifacts
   lib/           highlight.ts (dependency-free n/ syntax highlighter)
-  components/    HeroCanvas · StoneTablet · CodeBlock · Header · Footer · Landing · DimensionPage
-  layouts/       BaseLayout.astro (head, theme init, header/footer)
+  components/    HeroCanvas · StoneTablet · CodeBlock · Header · Footer · Landing · QuickStart
+  layouts/       BaseLayout.astro (metadata, theme init, header/footer)
   pages/         zh-TW at root, en under /en/
   i18n/verified.json  honesty-gate receipt (generated; footer stamp reads it)
   styles/        global.css (design tokens + components; light/dark)
@@ -63,7 +64,7 @@ src/
 ## i18n
 
 Route-based: **zh-TW** (default) at `/`, **en** at `/en/`. UI strings live in
-`src/i18n/ui.ts`; landing content in `src/i18n/landing.ts`. The header language
+`src/i18n/ui.ts`; page content has one module per surface. The header language
 button links to the current page's counterpart locale.
 
 ## Design tokens
@@ -77,7 +78,9 @@ Both light and dark themes are first-class; the viewer's toggle persists to
 ## Status
 
 Wave 2 landing: a verifiable two-program composition leads into the shared
-question (identify / observe / compose), method, evidence, and honest paths to
-the live repositories. Inner documentation pages, the blog renderer, and the
-playground remain later waves; their existing routes are placeholders and are
-not presented as finished destinations from the landing page.
+question (identify / observe / compose), method, evidence, and honest paths.
+`/tools/` is now a bilingual Quick Start built around the same verified
+composition artifact. Canonical and locale metadata, `robots.txt`, and a
+sitemap cover the mature routes; unfinished inner routes remain reachable but
+are `noindex,follow`. The documentation surfaces, blog renderer, and playground
+remain later waves and are not presented as finished destinations.

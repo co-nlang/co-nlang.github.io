@@ -12,8 +12,9 @@
 // engine yields 10. The gate covered a different set of snippets than the site
 // rendered, so it could be green and wrong at the same time.
 //
-// This version derives its cases from `src/i18n/landing.ts` itself. A snippet
-// that is not covered cannot exist, because coverage is not a separate list.
+// This version derives inline cases from the i18n sources and multi-file cases
+// from snippet artifacts imported by rendered Astro components. Coverage is
+// not a separate list.
 //
 // ── A slide is not a program ─────────────────────────────────────────────
 // Blocks present several independent examples. Running one as a program is
@@ -25,8 +26,7 @@
 // is reported rather than obeyed.
 
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, writeFileSync, rmSync } from 'node:fs';
-import { readFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve, join } from 'node:path';
@@ -34,8 +34,6 @@ import { dirname, resolve, join } from 'node:path';
 const here = dirname(fileURLToPath(import.meta.url));
 const repo = resolve(here, '..');
 const OO = process.env.OO_BIN || resolve(repo, '../nlang-tools/target/release/oo');
-const SOURCE = resolve(repo, 'src/i18n/landing.ts');
-const LANDING = resolve(repo, 'src/components/Landing.astro');
 const RECEIPT = resolve(repo, 'src/i18n/verified.json');
 
 if (!existsSync(OO)) {
@@ -59,7 +57,19 @@ const norm = (s) => s.replace(/;;.*$/gm, '').replace(/\s+/g, ' ').trim();
 
 // ── extract every code block the site renders ────────────────────────────
 
-const src = readFileSync(SOURCE, 'utf8');
+function filesUnder(dir, extension) {
+  const found = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) found.push(...filesUnder(path, extension));
+    else if (entry.name.endsWith(extension)) found.push(path);
+  }
+  return found;
+}
+
+const src = filesUnder(resolve(repo, 'src/i18n'), '.ts')
+  .map((path) => readFileSync(path, 'utf8'))
+  .join('\n');
 const blocks = [...src.matchAll(/([A-Za-z_]\w*):\s*`([^`]*)`/g)]
   .filter((m) => /code$/i.test(m[1]) || /;;\s*→/.test(m[2]))
   .map((m, i) => ({ i, key: m[1], body: m[2] }));
@@ -68,10 +78,11 @@ const blocks = [...src.matchAll(/([A-Za-z_]\w*):\s*`([^`]*)`/g)]
 // verifier discovers those imports instead of maintaining a parallel list.
 // If an artifact stops being rendered, it stops being verified; if the page
 // imports a new one, the gate must understand and run it.
-const landingSrc = readFileSync(LANDING, 'utf8');
-const fixtureRefs = [
-  ...landingSrc.matchAll(/from\s+['"]\.\.\/snippets\/([^'"]+\.json)['"]/g),
-].map((m) => m[1]);
+const renderedSrc = filesUnder(resolve(repo, 'src'), '.astro')
+  .map((path) => readFileSync(path, 'utf8'))
+  .join('\n');
+const fixtureRefs = [...renderedSrc.matchAll(/from\s+['"][^'"]*\/snippets\/([^'"]+\.json)['"]/g)]
+  .map((m) => m[1]);
 const fixtures = [...new Set(fixtureRefs)].map((name) => {
   const path = resolve(repo, 'src/snippets', name);
   const fixture = JSON.parse(readFileSync(path, 'utf8'));

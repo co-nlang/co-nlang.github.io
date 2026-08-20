@@ -540,6 +540,28 @@ Join（縮短現有內容）
 明確未做：blog renderer、playground、placeholder 內頁、workspace／conformance 收據、獨立
 文件站。這些沒有被 landing 新結構偷偷吸收。
 
+### 9.8 第一個可走完的出口（2026-08-20，尚未 commit）
+
+正式站部署後，首頁的「試用」不再把第一次接觸者送往內容已落後的引擎 README，而是進入
+雙語 `/tools/` Quick Start。它固定使用官網 gate 同一個 `v0.26.1` release，帶使用者完成
+建置、建立首頁那兩份來源、實際觀測 `server`，再交代 `eval`／`run`／`evolve` 的語義邊界。
+
+這不是第二份範例：Quick Start 與 landing 共讀
+`src/snippets/two-programs-compose.json`。honesty gate 也從只認 `Landing.astro`，改為遞迴發現
+所有 Astro component 實際 import 的 snippet artifact；因此日後把同一件證據帶進新頁面，
+不必另維護一張人工清單。
+
+搜尋與分享邊界一併補齊：
+
+- 成熟頁面有 canonical、`zh-Hant`／`en`／`x-default` hreflang 與 Open Graph metadata；
+- `robots.txt` 指向 sitemap；sitemap 只列 `/`、`/en/`、`/tools/`、`/en/tools/`；
+- 尚未完成的 `/language`、`/discovery`、`/research`、`/join`、`/blog` 保留 URL，標成
+  `noindex,follow`，不讓搜尋結果替網站誇大完成度。
+
+〔量〕：`npm run verify:snippets` 維持 **1/1 宣稱綠**，正序／反序控制皆綠；
+`npm run build` 產出 **14 個 HTML 頁面與 1 份 sitemap**。尚未做 OG 圖、瀏覽器中的分享卡
+實測、真實新手可用性訪談；其餘 placeholder 也沒有因本弧而被視為完成。
+
 ---
 
 ## 10. 開放問題

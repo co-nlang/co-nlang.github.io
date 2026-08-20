@@ -1,10 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import DimensionPage from '../components/DimensionPage.astro';
-import { pageMeta } from '../i18n/ui';
+import QuickStart from '../components/QuickStart.astro';
+import { quickStart } from '../i18n/quickstart';
 const lang = 'zh-TW' as const;
-const key = 'tools';
+const { title, description } = quickStart[lang].meta;
 ---
-<BaseLayout lang={lang} title={`${pageMeta[key][lang].title} — n/`}>
-  <DimensionPage lang={lang} metaKey={key} />
+<BaseLayout lang={lang} title={`${title} — n/`} description={description}>
+  <QuickStart lang={lang} />
 </BaseLayout>

@@ -126,7 +126,7 @@ const zh: LandingContent = {
     title: '這裡不是四個維度，是幾條不同的路',
     lead: '首頁到這裡已經把問題說完。接下來依你想做的事選入口；未完成的內頁不會假裝成文件。',
     items: [
-      { mark: 'oo', title: '跑起來', body: '安裝參考引擎，從 run、repl、fmt 與 lint 開始。', tag: '前往引擎倉 →', href: 'https://github.com/co-nlang/nlang-tools' },
+      { mark: 'oo', title: '跑起來', body: '安裝參考引擎，從兩個真實檔案的合併開始。', tag: '五分鐘 Quick Start →', href: '/tools' },
       { mark: '§', title: '讀規格', body: '語法、語義、實現契約與符合性要求都在同一部法典。', tag: '前往規格書 →', href: 'https://github.com/co-nlang/nlang-spec' },
       { mark: 'H*', title: '看研究', body: '從白皮書到障礙階梯；定理、reduction 與 correspondence 分開標記。', tag: '進入研究倉 →', href: 'https://github.com/co-nlang/research' },
       { mark: 'git', title: '看它怎麼改變', body: '故事提交記錄每一弧之前相信什麼、哪個量測推翻它，以及代價。', tag: '閱讀演進記錄 →', href: 'https://github.com/co-nlang/nlang-tools/commits/top' },
@@ -208,7 +208,7 @@ const en: LandingContent = {
     title: 'Not four dimensions — several ways forward',
     lead: 'The landing page has made its case. From here, choose what you want to do; unfinished inner pages will not pretend to be documentation.',
     items: [
-      { mark: 'oo', title: 'Run it', body: 'Install the reference engine and begin with run, repl, fmt, and lint.', tag: 'Open the engine repo →', href: 'https://github.com/co-nlang/nlang-tools' },
+      { mark: 'oo', title: 'Run it', body: 'Install the reference engine and begin by composing two real files.', tag: 'Five-minute Quick Start →', href: '/en/tools' },
       { mark: '§', title: 'Read the specification', body: 'Syntax, semantics, implementation contracts, and conformance requirements share one code of law.', tag: 'Open the specification →', href: 'https://github.com/co-nlang/nlang-spec' },
       { mark: 'H*', title: 'Read the research', body: 'From the whitepaper to the obstruction ladder, with theorem, reduction, and correspondence marked separately.', tag: 'Enter the research repo →', href: 'https://github.com/co-nlang/research' },
       { mark: 'git', title: 'See how it changes', body: 'Story commits record what each arc believed, which measurement overturned it, and what the correction cost.', tag: 'Read the history →', href: 'https://github.com/co-nlang/nlang-tools/commits/top' },

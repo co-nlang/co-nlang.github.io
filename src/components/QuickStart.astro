@@ -1,0 +1,87 @@
+---
+import type { Lang } from '../i18n/ui';
+import { localize } from '../i18n/ui';
+import { quickStart } from '../i18n/quickstart';
+import composition from '../snippets/two-programs-compose.json';
+import CodeBlock from './CodeBlock.astro';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const c = quickStart[lang];
+const runCommand = `./target/release/oo run ${composition.files.map((file) => file.name).join(' ')} --observe ${composition.observe}`;
+---
+
+<main class="quickstart">
+  <section class="quick-hero">
+    <div class="wrap narrow">
+      <a class="back" href={localize('/', lang)}>{c.back}</a>
+      <span class="eyebrow">{c.eyebrow}</span>
+      <h1>{c.title}</h1>
+      <p class="lead">{c.lead}</p>
+      <p class="requirements">{c.requirements}</p>
+    </div>
+  </section>
+
+  <div class="rule"></div>
+
+  <section class="quick-step">
+    <div class="wrap narrow">
+      <div class="quick-heading">
+        <span>{c.build.n}</span>
+        <div><h2>{c.build.title}</h2><p>{c.build.body}</p></div>
+      </div>
+      <CodeBlock code={c.build.commands} cap={c.build.cap} copy lang={lang} syntax="plain" />
+    </div>
+  </section>
+
+  <div class="rule"></div>
+
+  <section class="quick-step compose-step">
+    <div class="wrap narrow">
+      <div class="quick-heading">
+        <span>{c.compose.n}</span>
+        <div><h2>{c.compose.title}</h2><p>{c.compose.body}</p></div>
+      </div>
+      <div class="quick-files">
+        {composition.files.map((file) => (
+          <CodeBlock code={file.source.trimEnd()} cap={`${c.compose.sourceLabel} · ${file.name}`} copy lang={lang} />
+        ))}
+      </div>
+      <CodeBlock code={runCommand} cap={c.compose.runCap} copy lang={lang} syntax="plain" />
+      <div class="quick-result">
+        <CodeBlock code={composition.expected} cap={c.compose.resultCap} lang={lang} />
+      </div>
+    </div>
+  </section>
+
+  <div class="rule"></div>
+
+  <section class="quick-step">
+    <div class="wrap narrow">
+      <div class="quick-heading">
+        <span>{c.read.n}</span>
+        <div><h2>{c.read.title}</h2><p>{c.read.body}</p></div>
+      </div>
+      <div class="command-grid">
+        {c.read.items.map((item) => (
+          <article>
+            <code>{item.command}</code>
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="quick-next">
+    <div class="wrap narrow">
+      <h2>{c.next.title}</h2>
+      <p>{c.next.body}</p>
+      <div class="cta-row">
+        <a class="btn btn-gold" href="https://github.com/co-nlang/nlang-spec">{c.next.spec}</a>
+        <a class="btn btn-ghost" href="https://github.com/co-nlang/nlang-tools">{c.next.engine}</a>
+      </div>
+    </div>
+  </section>
+</main>

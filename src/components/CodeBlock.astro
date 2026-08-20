@@ -2,9 +2,13 @@
 import { highlight } from '../lib/highlight';
 import type { Lang } from '../i18n/ui';
 
-interface Props { code: string; cap?: string; copy?: boolean; lang?: Lang }
-const { code, cap, copy = false, lang = 'en' } = Astro.props;
-const html = highlight(code);
+interface Props { code: string; cap?: string; copy?: boolean; lang?: Lang; syntax?: 'nlang' | 'plain' }
+const { code, cap, copy = false, lang = 'en', syntax = 'nlang' } = Astro.props;
+const escapeHtml = (s: string) => s
+  .replaceAll('&', '&amp;')
+  .replaceAll('<', '&lt;')
+  .replaceAll('>', '&gt;');
+const html = syntax === 'nlang' ? highlight(code) : escapeHtml(code);
 const [labelCopy, labelCopied] = lang === 'zh-TW' ? ['複製', '已複製'] : ['Copy', 'Copied'];
 const framed = Boolean(cap || copy);
 ---
